@@ -212,6 +212,16 @@ a{color:inherit;text-decoration:none}
 .tp-del{background:none;border:none;color:#c00;cursor:pointer;font-size:13px;padding:0 2px}
 .empty-badge{font-size:11px;color:#bbb;font-style:italic}
 
+
+/* ── INSTRUCTIONS BAR ── */
+.instructions-bar{background:#fff;border-bottom:1px solid #E0E8F0;padding:1rem 2rem;direction:rtl}
+.inst-title{font-size:13px;font-weight:700;color:#1F4E79;margin-bottom:.75rem;letter-spacing:.02em}
+.inst-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.inst-item{display:flex;gap:10px;align-items:flex-start;background:#F7FAFD;border-radius:8px;padding:9px 12px;font-size:12.5px;color:#3a3a4e;line-height:1.6;border:0.5px solid #E0ECF8}
+.inst-item strong{color:#1F4E79}
+.inst-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+@media(max-width:700px){.instructions-bar{padding:.75rem 1rem}}
+
 </style>
 </head>
 <body>
@@ -219,12 +229,38 @@ a{color:inherit;text-decoration:none}
 <div class="topbar">
   <div>
     <div class="topbar-title">מרכז מטלות חקר – מלחמת העולם הראשונה (1914–1918)</div>
-    <div class="topbar-sub">פנימיית מבואות ים · היסטוריה כיתה ט' · קבוצות של 3 תלמידים</div>
+    <div class="topbar-sub">מטלת מסכת מחצית ב' · כיתות ט'</div>
   </div>
   <div class="topbar-badges">
     <span class="tbadge">23 מטלות</span>
-    <span class="tbadge">פרזנטציה 8–10 דק'</span>
+    <span class="tbadge">הגשה עד 25.5.26</span>
     <span class="tbadge">Word להורדה</span>
+  </div>
+</div>
+
+<div class="instructions-bar">
+  <div class="inst-title">📋 הנחיות כלליות לעבודה ולפרזנטציה</div>
+  <div class="inst-grid">
+    <div class="inst-item">
+      <div class="inst-icon">👥</div>
+      <div><strong>קבוצות של 3 תלמידים.</strong> מי שבחר מטלה ראשון – האחרים לא יכולים לגשת אליה.</div>
+    </div>
+    <div class="inst-item">
+      <div class="inst-icon">📅</div>
+      <div><strong>שיבוץ קבוצות</strong> לא יאוחר מה-<strong>30.4.26</strong>. <strong>הגשת המטלה</strong> עד <strong>25.5.26</strong>.</div>
+    </div>
+    <div class="inst-item">
+      <div class="inst-icon">📧</div>
+      <div>יש להגיש מסמך Word למייל: <strong>1005530585@hityash.org.il</strong></div>
+    </div>
+    <div class="inst-item">
+      <div class="inst-icon">🎤</div>
+      <div><strong>כולם חייבים להציג</strong> על מנת לקבל ציון. לאחר ההגשה – פרזנטציה בכיתה.</div>
+    </div>
+    <div class="inst-item">
+      <div class="inst-icon">📊</div>
+      <div><strong>משקל העבודה:</strong> 25% מציון המחצית. <strong>משקל הפרזנטציה:</strong> 25% מציון השנתי.</div>
+    </div>
   </div>
 </div>
 
