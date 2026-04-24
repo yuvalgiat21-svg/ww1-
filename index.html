@@ -222,6 +222,97 @@ a{color:inherit;text-decoration:none}
 .inst-icon{font-size:16px;flex-shrink:0;margin-top:1px}
 @media(max-width:700px){.instructions-bar{padding:.75rem 1rem}}
 
+
+/* ── EDIT MODE ── */
+.edit-mode-active [data-editable]:hover {
+  outline: 2px dashed #2E75B6;
+  outline-offset: 3px;
+  cursor: pointer;
+  border-radius: 4px;
+  background: rgba(46,117,182,.04);
+}
+.edit-mode-active [data-editable]::after {
+  content: ' ✏️';
+  font-size: 11px;
+  opacity: .5;
+}
+.edit-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  z-index: 3000;
+  align-items: center;
+  justify-content: center;
+}
+.edit-overlay.open { display: flex; }
+.edit-box {
+  background: #fff;
+  border-radius: 12px;
+  width: min(580px, 95vw);
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 40px rgba(0,0,0,.3);
+  direction: rtl;
+  overflow: hidden;
+}
+.edit-box-head {
+  background: linear-gradient(135deg,#1F4E79,#2E75B6);
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.edit-box-title { color:#fff; font-size:15px; font-weight:700; }
+.edit-box-body { padding: 1.25rem; flex:1; overflow-y:auto; }
+.edit-textarea {
+  width: 100%;
+  min-height: 140px;
+  padding: 10px 12px;
+  border: 1.5px solid #D0DDE8;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-family: inherit;
+  direction: rtl;
+  resize: vertical;
+  outline: none;
+  line-height: 1.7;
+  transition: border .15s;
+}
+.edit-textarea:focus { border-color: #2E75B6; }
+.edit-hint { font-size: 11.5px; color: #999; margin-top: 6px; line-height: 1.5; }
+.edit-nav { display:flex; gap:10px; margin-top: 1rem; justify-content:flex-end; }
+.edit-saving { font-size:12px; color:#888; margin-top:4px; }
+.edit-mode-bar {
+  display: none;
+  position: fixed;
+  bottom: 5.5rem;
+  left: 1.5rem;
+  background: #F0A500;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 700;
+  z-index: 300;
+  box-shadow: 0 3px 12px rgba(0,0,0,.2);
+  align-items: center;
+  gap: 8px;
+}
+.edit-mode-bar.visible { display: flex; }
+.edit-mode-bar button {
+  background: rgba(255,255,255,.25);
+  border: none;
+  color: #fff;
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
 </style>
 </head>
 <body>
@@ -243,23 +334,23 @@ a{color:inherit;text-decoration:none}
   <div class="inst-grid">
     <div class="inst-item">
       <div class="inst-icon">👥</div>
-      <div><strong>קבוצות של 3 תלמידים.</strong> מי שבחר מטלה ראשון – האחרים לא יכולים לגשת אליה.</div>
+      <div data-editable="inst-groups" data-label="כלל קבוצות">קבוצות של 3 תלמידים. מי שבחר מטלה ראשון – האחרים לא יכולים לגשת אליה.</div>
     </div>
     <div class="inst-item">
       <div class="inst-icon">📅</div>
-      <div><strong>שיבוץ קבוצות</strong> לא יאוחר מה-<strong>30.4.26</strong>. <strong>הגשת המטלה</strong> עד <strong>25.5.26</strong>.</div>
+      <div data-editable="inst-dates" data-label="תאריכי שיבוץ והגשה">שיבוץ קבוצות לא יאוחר מה-30.4.26. הגשת המטלה עד 25.5.26.</div>
     </div>
     <div class="inst-item">
       <div class="inst-icon">📧</div>
-      <div>יש להגיש מסמך Word למייל: <strong>1005530585@hityash.org.il</strong></div>
+      <div data-editable="inst-email" data-label="מייל הגשה">יש להגיש מסמך Word למייל: 1005530585@hityash.org.il</div>
     </div>
     <div class="inst-item">
       <div class="inst-icon">🎤</div>
-      <div><strong>כולם חייבים להציג</strong> על מנת לקבל ציון. לאחר ההגשה – פרזנטציה בכיתה.</div>
+      <div data-editable="inst-present" data-label="הנחיות פרזנטציה">כולם חייבים להציג על מנת לקבל ציון. לאחר ההגשה – פרזנטציה בכיתה.</div>
     </div>
     <div class="inst-item">
       <div class="inst-icon">📊</div>
-      <div><strong>משקל העבודה:</strong> 25% מציון המחצית. <strong>משקל הפרזנטציה:</strong> 25% מציון השנתי.</div>
+      <div data-editable="inst-weight" data-label="משקל ציונים">משקל העבודה: 25% מציון המחצית. משקל הפרזנטציה: 25% מציון השנתי.</div>
     </div>
   </div>
 </div>
@@ -322,19 +413,27 @@ function buildSidebar(){
     const b=document.createElement('button');
     b.className='tab-btn'+(i===cur?' active':'');
     b.innerHTML=`<span class="tab-emoji">${a.e}</span><span class="tab-label">${a.t}</span><span class="tab-num">${a.n}</span>`;
-    b.onclick=()=>{cur=i;buildSidebar();render();b.scrollIntoView({block:'nearest'});window.scrollTo(0,0);};
+    b.onclick=()=>{cur=i;buildSidebar();render();
+// Rebind editable elements after render if in edit mode
+function rebindEditables() {
+  if (!_editMode) return;
+  document.querySelectorAll('[data-editable]').forEach(el => {
+    el.removeEventListener('click', onEditableClick);
+    el.addEventListener('click', onEditableClick);
+  });
+}b.scrollIntoView({block:'nearest'});window.scrollTo(0,0);};
     sb.appendChild(b);
   });
 }
 
 function render(){
   const a=A[cur];
-  const introHtml=a.intro.map(p=>`<p class="intro-para">${p}</p>`).join('');
+  const introHtml=a.intro.map((p,i)=>`<p class="intro-para" data-editable="task_${a.n}_intro_${i}" data-label="מבוא ${i+1} – מטלה ${a.n}">${_contentCache['task_'+a.n+'_intro_'+i]||p}</p>`).join('');
   const focusHtml=`<table class="focus-table"><thead><tr>${a.focusCols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${a.focusRows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
   const sparkHtml=a.spark?`<div class="spark-box"><div class="spark-lbl">${a.spark.title}</div><div class="spark-txt">${a.spark.txt}</div></div>`:'';
-  const tasksHtml=a.tasks.map((t,i)=>`<div class="task-row"><div class="task-circle">${i+1}</div><div class="task-body"><div class="task-q">${t.q}</div><div class="task-detail">${t.d}</div>${t.ch?`<div class="challenge-strip"><div class="ch-lbl">💡 אתגר חשיבה</div><div class="ch-txt">${t.ch}</div></div>`:''}</div></div>`).join('');
+  const tasksHtml=a.tasks.map((t,i)=>`<div class="task-row"><div class="task-circle">${i+1}</div><div class="task-body"><div class="task-q" data-editable="task_${a.n}_tq_${i}" data-label="שאלה ${i+1} – מטלה ${a.n}">${_contentCache['task_'+a.n+'_tq_'+i]||t.q}</div><div class="task-detail" data-editable="task_${a.n}_td_${i}" data-label="פירוט ${i+1} – מטלה ${a.n}">${_contentCache['task_'+a.n+'_td_'+i]||t.d}</div>${t.ch?`<div class="challenge-strip"><div class="ch-lbl">💡 אתגר חשיבה</div><div class="ch-txt" data-editable="task_${a.n}_ch_${i}" data-label="אתגר ${i+1} – מטלה ${a.n}">${_contentCache['task_'+a.n+'_ch_'+i]||t.ch}</div></div>`:''}</div></div>`).join('');
   const presAll=[...PRES,...(a.presExtra||[])];
-  const sourcesHtml=a.sources.map(s=>`<div class="src-item"><span class="src-dot">·</span>${s}</div>`).join('');
+  const sourcesHtml=a.sources.map((s,i)=>`<div class="src-item"><span class="src-dot">·</span><span data-editable="task_${a.n}_src_${i}" data-label="מקור ${i+1} – מטלה ${a.n}">${_contentCache['task_'+a.n+'_src_'+i]||s}</span></div>`).join('');
   const rubricHtml=RL.map((l,i)=>`<tr><td>${l}</td><td class="pct-cell">${RW[i]}</td><td>${a.rubric[i]}</td></tr>`).join('');
 
   document.getElementById('main').innerHTML=`
@@ -381,7 +480,7 @@ const STUDENTS = {"ט' 2":[{"name":"אהרונוב אופיר","id":"220046833"}
 
 // ── REGISTRATION SYSTEM – Google Sheets Backend ──
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbxWtdZVx5O0I-DS3e-Q9SSKzeU88fO7PGfziauLcsyl6N2lOKsZc8zcFfDnz4_VBCoq/exec';
-const PASS_TEACHER = 'mevaot2025';
+const PASS_TEACHER = 'yuval2104';
 let _cache = null; // local cache of registrations
 
 // ── API helpers ──
@@ -722,7 +821,128 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
   // Silent background load
   await loadFromServer();
+  await loadContent();
 });
+
+// ══════════════════════════════════════════
+// CONTENT EDITING SYSTEM
+// ══════════════════════════════════════════
+
+let _contentCache  = {};   // key → value from server
+let _editMode      = false;
+let _currentEditKey = null;
+let _currentEditLabel = '';
+
+// Load all editable content from server on startup
+async function loadContent() {
+  try {
+    const res = await gasGet({ action: 'getContent' });
+    if (res.ok) _contentCache = res.content || {};
+    applyContentToPage();
+  } catch(e) { /* silently fail */ }
+}
+
+// Apply loaded content to all [data-editable] elements
+function applyContentToPage() {
+  document.querySelectorAll('[data-editable]').forEach(el => {
+    const key = el.dataset.editable;
+    if (_contentCache[key] !== undefined) {
+      el.textContent = _contentCache[key];
+    }
+  });
+}
+
+// Enter edit mode (called after teacher login)
+function enterEditMode() {
+  _editMode = true;
+  document.body.classList.add('edit-mode-active');
+  document.getElementById('editModeBar').classList.add('visible');
+  // Bind click on all editable elements
+  document.querySelectorAll('[data-editable]').forEach(el => {
+    el.addEventListener('click', onEditableClick);
+  });
+}
+
+function exitEditMode() {
+  _editMode = false;
+  document.body.classList.remove('edit-mode-active');
+  document.getElementById('editModeBar').classList.remove('visible');
+  document.querySelectorAll('[data-editable]').forEach(el => {
+    el.removeEventListener('click', onEditableClick);
+  });
+}
+
+function onEditableClick(e) {
+  if (!_editMode) return;
+  e.stopPropagation();
+  const el  = e.currentTarget;
+  const key = el.dataset.editable;
+  const lbl = el.dataset.label || key;
+  openEditBox(key, lbl, el.textContent.trim());
+}
+
+function openEditBox(key, label, currentText) {
+  _currentEditKey   = key;
+  _currentEditLabel = label;
+  document.getElementById('editBoxTitle').textContent = 'עריכה: ' + label;
+  document.getElementById('editTextarea').value = currentText;
+  document.getElementById('editSaving').textContent = '';
+  document.getElementById('editOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('editTextarea').focus(), 100);
+}
+
+function closeEditBox() {
+  document.getElementById('editOverlay').classList.remove('open');
+  _currentEditKey = null;
+}
+
+async function saveEdit() {
+  const value = document.getElementById('editTextarea').value.trim();
+  if (!_currentEditKey) return;
+  document.getElementById('editSaving').textContent = 'שומר...';
+  try {
+    const res = await gasGet({
+      action: 'saveContent',
+      key:    _currentEditKey,
+      value:  value,
+      pass:   PASS_TEACHER
+    });
+    if (res.ok) {
+      _contentCache[_currentEditKey] = value;
+      // Update on page
+      document.querySelectorAll('[data-editable="' + _currentEditKey + '"]').forEach(el => {
+        el.textContent = value;
+      });
+      document.getElementById('editSaving').textContent = '✅ נשמר!';
+      setTimeout(closeEditBox, 700);
+    } else {
+      document.getElementById('editSaving').textContent = '❌ שגיאה: ' + res.error;
+    }
+  } catch(e) {
+    document.getElementById('editSaving').textContent = '❌ שגיאת תקשורת';
+  }
+}
+
+// Patch openTeacher to also enter edit mode
+const _origOpenTeacher = openTeacher;
+openTeacher = async function() {
+  const pw = prompt('סיסמת מורה:');
+  if (pw !== PASS_TEACHER) return alert('סיסמה שגויה');
+  // Ask what to do
+  const choice = confirm('לכניסה ללוח שיבוצים לחץ אישור.\nלמצב עריכת תוכן לחץ ביטול.');
+  if (choice) {
+    // Teacher panel
+    tpClass = Object.keys(STUDENTS)[0];
+    document.getElementById('teacherPanel').classList.add('open');
+    document.getElementById('tpContent').innerHTML = '<div style="text-align:center;padding:2rem;color:#888">טוען...</div>';
+    await loadFromServer();
+    buildTpTabs(); buildTpContent();
+  } else {
+    // Edit mode
+    enterEditMode();
+  }
+};
+
 </script>
 
 <!-- FAB button -->
@@ -803,6 +1023,32 @@ window.addEventListener('DOMContentLoaded', async () => {
       </div>
     </div>
   </div>
+</div>
+
+
+<!-- Edit overlay -->
+<div class="edit-overlay" id="editOverlay">
+  <div class="edit-box">
+    <div class="edit-box-head">
+      <div class="edit-box-title" id="editBoxTitle">עריכת טקסט</div>
+      <button class="modal-close" onclick="closeEditBox()">✕</button>
+    </div>
+    <div class="edit-box-body">
+      <textarea class="edit-textarea" id="editTextarea" dir="rtl"></textarea>
+      <div class="edit-hint">לשורה חדשה – Enter. השינוי יישמר לכל התלמידים.</div>
+      <div class="edit-saving" id="editSaving"></div>
+      <div class="edit-nav">
+        <button class="btn-secondary" onclick="closeEditBox()">ביטול</button>
+        <button class="btn-primary" onclick="saveEdit()">💾 שמור</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit mode indicator bar -->
+<div class="edit-mode-bar" id="editModeBar">
+  ✏️ מצב עריכה פעיל – לחץ על כל טקסט לעריכה
+  <button onclick="exitEditMode()">צא מעריכה</button>
 </div>
 
 </body>
