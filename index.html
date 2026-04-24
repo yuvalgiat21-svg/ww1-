@@ -361,6 +361,12 @@ a{color:inherit;text-decoration:none}
 </div>
 
 <script>
+// Global declarations (must be at top to avoid temporal dead zone)
+let _contentCache = {};
+let _editMode = false;
+let _currentEditKey = null;
+let _currentEditLabel = '';
+
 const A=[
 {n:1,e:"🔥",t:"הגורמים לפרוץ המלחמה",sub:"מודל M.A.I.N ואפקט הדומינו",f:"01_causes_of_war.docx",
 intro:["מלחמת העולם הראשונה (1914–1918) אינה רק פרק נוסף בספרי ההיסטוריה, אלא רעידת אדמה טקטונית שעיצבה את פני המאה ה-20 והמציאות הגלובלית בה אנו חיים כיום. כחוקרים צעירים של היסטוריה פוליטית, עלינו להבין כי אירועים בקנה מידה כזה אינם מתרחשים בחלל ריק. הבנת המלחמה מחייבת אותנו להבחין בין ה'עילה' – אותו ניצוץ מקרי שהצית את האש – לבין 'גורמי העומק'.","מטרת העל של מטלה זו היא לפתח בכם את היכולת לנתח תהליכים היסטוריים ארוכי טווח ולזהות כיצד בחירות אנושיות, אינטרסים של מעצמות ומבנים פוליטיים מובילים לנקודת האל-חזור."],
@@ -718,11 +724,16 @@ let tpClass = null;
 async function openTeacher() {
   const pw = prompt('סיסמת מורה:');
   if (pw !== PASS_TEACHER) return alert('סיסמה שגויה');
-  tpClass = Object.keys(STUDENTS)[0];
-  document.getElementById('teacherPanel').classList.add('open');
-  document.getElementById('tpContent').innerHTML = '<div style="text-align:center;padding:2rem;color:#888">טוען...</div>';
-  await loadFromServer();
-  buildTpTabs(); buildTpContent();
+  const choice = confirm('לכניסה ללוח שיבוצים לחץ אישור.\nלמצב עריכת תוכן לחץ ביטול.');
+  if (choice) {
+    tpClass = Object.keys(STUDENTS)[0];
+    document.getElementById('teacherPanel').classList.add('open');
+    document.getElementById('tpContent').innerHTML = '<div style="text-align:center;padding:2rem;color:#888">טוען...</div>';
+    await loadFromServer();
+    buildTpTabs(); buildTpContent();
+  } else {
+    enterEditMode();
+  }
 }
 function closeTeacher() { document.getElementById('teacherPanel').classList.remove('open'); }
 
@@ -828,10 +839,10 @@ window.addEventListener('DOMContentLoaded', async () => {
 // CONTENT EDITING SYSTEM
 // ══════════════════════════════════════════
 
-let _contentCache  = {};   // key → value from server
-let _editMode      = false;
-let _currentEditKey = null;
-let _currentEditLabel = '';
+_contentCache  = {};   // key → value from server (declared at top)
+_editMode      = false;
+_currentEditKey = null;
+_currentEditLabel = '';
 
 // Load all editable content from server on startup
 async function loadContent() {
@@ -923,25 +934,7 @@ async function saveEdit() {
   }
 }
 
-// Patch openTeacher to also enter edit mode
-const _origOpenTeacher = openTeacher;
-openTeacher = async function() {
-  const pw = prompt('סיסמת מורה:');
-  if (pw !== PASS_TEACHER) return alert('סיסמה שגויה');
-  // Ask what to do
-  const choice = confirm('לכניסה ללוח שיבוצים לחץ אישור.\nלמצב עריכת תוכן לחץ ביטול.');
-  if (choice) {
-    // Teacher panel
-    tpClass = Object.keys(STUDENTS)[0];
-    document.getElementById('teacherPanel').classList.add('open');
-    document.getElementById('tpContent').innerHTML = '<div style="text-align:center;padding:2rem;color:#888">טוען...</div>';
-    await loadFromServer();
-    buildTpTabs(); buildTpContent();
-  } else {
-    // Edit mode
-    enterEditMode();
-  }
-};
+
 
 </script>
 
