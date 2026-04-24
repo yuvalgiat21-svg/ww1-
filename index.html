@@ -367,6 +367,14 @@ let _editMode = false;
 let _currentEditKey = null;
 let _currentEditLabel = '';
 
+// Safe content getter - returns custom value or falls back to default
+function cc(key, fallback) {
+  try {
+    return (_contentCache && _contentCache[key] !== undefined && _contentCache[key] !== '')
+      ? _contentCache[key] : fallback;
+  } catch(e) { return fallback; }
+}
+
 const A=[
 {n:1,e:"🔥",t:"הגורמים לפרוץ המלחמה",sub:"מודל M.A.I.N ואפקט הדומינו",f:"01_causes_of_war.docx",
 intro:["מלחמת העולם הראשונה (1914–1918) אינה רק פרק נוסף בספרי ההיסטוריה, אלא רעידת אדמה טקטונית שעיצבה את פני המאה ה-20 והמציאות הגלובלית בה אנו חיים כיום. כחוקרים צעירים של היסטוריה פוליטית, עלינו להבין כי אירועים בקנה מידה כזה אינם מתרחשים בחלל ריק. הבנת המלחמה מחייבת אותנו להבחין בין ה'עילה' – אותו ניצוץ מקרי שהצית את האש – לבין 'גורמי העומק'.","מטרת העל של מטלה זו היא לפתח בכם את היכולת לנתח תהליכים היסטוריים ארוכי טווח ולזהות כיצד בחירות אנושיות, אינטרסים של מעצמות ומבנים פוליטיים מובילים לנקודת האל-חזור."],
@@ -434,12 +442,12 @@ function rebindEditables() {
 
 function render(){
   const a=A[cur];
-  const introHtml=a.intro.map((p,i)=>`<p class="intro-para" data-editable="task_${a.n}_intro_${i}" data-label="מבוא ${i+1} – מטלה ${a.n}">${_contentCache['task_'+a.n+'_intro_'+i]||p}</p>`).join('');
+  const introHtml=a.intro.map((p,i)=>`<p class="intro-para" data-editable="task_${a.n}_intro_${i}" data-label="מבוא ${i+1} – מטלה ${a.n}">${cc('task_'+a.n+'_intro_'+i,p)}</p>`).join('');
   const focusHtml=`<table class="focus-table"><thead><tr>${a.focusCols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${a.focusRows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
   const sparkHtml=a.spark?`<div class="spark-box"><div class="spark-lbl">${a.spark.title}</div><div class="spark-txt">${a.spark.txt}</div></div>`:'';
-  const tasksHtml=a.tasks.map((t,i)=>`<div class="task-row"><div class="task-circle">${i+1}</div><div class="task-body"><div class="task-q" data-editable="task_${a.n}_tq_${i}" data-label="שאלה ${i+1} – מטלה ${a.n}">${_contentCache['task_'+a.n+'_tq_'+i]||t.q}</div><div class="task-detail" data-editable="task_${a.n}_td_${i}" data-label="פירוט ${i+1} – מטלה ${a.n}">${_contentCache['task_'+a.n+'_td_'+i]||t.d}</div>${t.ch?`<div class="challenge-strip"><div class="ch-lbl">💡 אתגר חשיבה</div><div class="ch-txt" data-editable="task_${a.n}_ch_${i}" data-label="אתגר ${i+1} – מטלה ${a.n}">${_contentCache['task_'+a.n+'_ch_'+i]||t.ch}</div></div>`:''}</div></div>`).join('');
+  const tasksHtml=a.tasks.map((t,i)=>`<div class="task-row"><div class="task-circle">${i+1}</div><div class="task-body"><div class="task-q" data-editable="task_${a.n}_tq_${i}" data-label="שאלה ${i+1} – מטלה ${a.n}">${cc('task_'+a.n+'_tq_'+i,t.q)}</div><div class="task-detail" data-editable="task_${a.n}_td_${i}" data-label="פירוט ${i+1} – מטלה ${a.n}">${cc('task_'+a.n+'_td_'+i,t.d)}</div>${t.ch?`<div class="challenge-strip"><div class="ch-lbl">💡 אתגר חשיבה</div><div class="ch-txt" data-editable="task_${a.n}_ch_${i}" data-label="אתגר ${i+1} – מטלה ${a.n}">${cc('task_'+a.n+'_ch_'+i,t.ch)}</div></div>`:''}</div></div>`).join('');
   const presAll=[...PRES,...(a.presExtra||[])];
-  const sourcesHtml=a.sources.map((s,i)=>`<div class="src-item"><span class="src-dot">·</span><span data-editable="task_${a.n}_src_${i}" data-label="מקור ${i+1} – מטלה ${a.n}">${_contentCache['task_'+a.n+'_src_'+i]||s}</span></div>`).join('');
+  const sourcesHtml=a.sources.map((s,i)=>`<div class="src-item"><span class="src-dot">·</span><span data-editable="task_${a.n}_src_${i}" data-label="מקור ${i+1} – מטלה ${a.n}">${cc('task_'+a.n+'_src_'+i,s)}</span></div>`).join('');
   const rubricHtml=RL.map((l,i)=>`<tr><td>${l}</td><td class="pct-cell">${RW[i]}</td><td>${a.rubric[i]}</td></tr>`).join('');
 
   document.getElementById('main').innerHTML=`
