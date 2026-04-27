@@ -488,6 +488,7 @@ a{color:inherit;text-decoration:none}
     <span class="tbadge">23 מטלות</span>
     <span class="tbadge">הגשה עד 25.5.26</span>
     <span class="tbadge">Word להורדה</span>
+    <button onclick="openTeacher()" style="padding:6px 14px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:20px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit">👩‍🏫 מורה</button>
   </div>
 </div>
 
@@ -981,15 +982,6 @@ async function exportCSV() {
 
 // ── INIT: load registrations on page load ──
 window.addEventListener('DOMContentLoaded', async () => {
-  // Add teacher button to topbar (once)
-  const tb = document.querySelector('.topbar');
-  if (tb) {
-    const btn = document.createElement('button');
-    btn.textContent = '👩‍🏫 מורה';
-    btn.style.cssText = 'padding:6px 14px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:20px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit';
-    btn.onclick = openTeacher;
-    tb.appendChild(btn);
-  }
   // Load editable content from server
   await loadContent();
   // Load student overrides from Firebase
