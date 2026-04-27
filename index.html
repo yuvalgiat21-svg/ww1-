@@ -313,7 +313,169 @@ a{color:inherit;text-decoration:none}
   font-weight: 600;
 }
 
+
+/* ── FIREBASE REGISTRATION SYSTEM ── */
+.reg-fab{position:fixed;bottom:1.5rem;left:1.5rem;background:#1F4E79;color:#fff;border:none;border-radius:50px;padding:12px 22px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.25);z-index:200;display:flex;align-items:center;gap:8px;transition:background .15s;font-family:var(--font-sans)}
+.reg-fab:hover{background:#1a4169}
+
+/* Class selector overlay */
+.cls-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;align-items:center;justify-content:center;direction:rtl}
+.cls-overlay.open{display:flex}
+.cls-box{background:#fff;border-radius:16px;width:min(420px,92vw);box-shadow:0 12px 50px rgba(0,0,0,.25);overflow:hidden}
+.cls-head{background:linear-gradient(135deg,#1F4E79,#2E75B6);padding:1.25rem 1.5rem}
+.cls-head-title{font-size:17px;font-weight:700;color:#fff;margin-bottom:3px}
+.cls-head-sub{font-size:12px;color:rgba(255,255,255,.72)}
+.cls-body{padding:1.25rem}
+.cls-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
+.cls-btn{padding:16px 12px;border:2px solid #E0E8F0;border-radius:10px;background:#fff;cursor:pointer;font-size:15px;font-weight:700;color:#1F4E79;transition:all .15s;text-align:center;font-family:inherit}
+.cls-btn:hover{border-color:#2E75B6;background:#EEF6FF;transform:translateY(-1px)}
+.cls-btn.active{border-color:#1F4E79;background:#1F4E79;color:#fff}
+
+/* Main registration modal */
+.reg-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;align-items:center;justify-content:center;direction:rtl}
+.reg-overlay.open{display:flex}
+.reg-modal{background:#fff;border-radius:16px;width:min(560px,95vw);max-height:92vh;overflow-y:auto;box-shadow:0 12px 50px rgba(0,0,0,.25)}
+.reg-modal-head{background:linear-gradient(135deg,#1F4E79,#2E75B6);padding:1.25rem 1.5rem;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.reg-modal-title{font-size:17px;font-weight:700;color:#fff;margin-bottom:3px}
+.reg-modal-sub{font-size:12px;color:rgba(255,255,255,.75)}
+.reg-modal-close{background:rgba(255,255,255,.2);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.reg-modal-body{padding:1.5rem}
+
+/* Steps */
+.reg-steps{display:flex;gap:0;margin-bottom:1.5rem;border-radius:8px;overflow:hidden;border:1px solid #E0E8F0}
+.reg-step-ind{flex:1;padding:9px 4px;text-align:center;font-size:11px;font-weight:600;color:#aaa;background:#F7FAFD;border-left:1px solid #E0E8F0;transition:all .2s}
+.reg-step-ind:last-child{border-left:none}
+.reg-step-ind.active{background:#1F4E79;color:#fff}
+.reg-step-ind.done{background:#E6F1FB;color:#0C447C}
+.reg-step-num{display:block;font-size:15px;font-weight:700;margin-bottom:1px}
+.reg-step-panel{display:none}.reg-step-panel.active{display:block}
+
+/* Task grid */
+.tasks-overview{display:grid;grid-template-columns:1fr;gap:8px;max-height:380px;overflow-y:auto;margin-bottom:1rem}
+.task-card{border:1.5px solid #E0E8F0;border-radius:9px;padding:11px 14px;cursor:pointer;transition:all .15s;position:relative}
+.task-card:hover{border-color:#2E75B6;background:#EEF6FF}
+.task-card.taken{opacity:.5;cursor:not-allowed;background:#F5F5F5}
+.task-card.selected-task{border-color:#1F4E79;border-width:2px;background:#EEF6FF}
+.task-card-top{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.task-card-emoji{font-size:15px}
+.task-card-num{font-size:11px;font-weight:700;color:#2E75B6;background:#E6F1FB;padding:1px 7px;border-radius:10px}
+.task-card-name{font-size:13px;font-weight:600;color:#1a1a2e;flex:1}
+.task-card-sub{font-size:11.5px;color:#666}
+.taken-pill{position:absolute;top:10px;left:10px;background:#DC2626;color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px}
+
+/* Student selection */
+.search-input{width:100%;padding:9px 13px;border:1.5px solid #D0DDE8;border-radius:8px;font-size:13px;direction:rtl;margin-bottom:9px;outline:none;transition:border .15s;font-family:inherit}
+.search-input:focus{border-color:#2E75B6}
+.student-scroll{max-height:220px;overflow-y:auto;border:1px solid #E0E8F0;border-radius:8px;margin-bottom:.75rem}
+.student-row{padding:9px 12px;display:flex;align-items:center;gap:9px;border-bottom:1px solid #F0F4F8;cursor:pointer;transition:background .1s;font-size:13px}
+.student-row:last-child{border-bottom:none}
+.student-row:hover{background:#EEF6FF}
+.student-row.sel{background:#E6F1FB}
+.s-check{width:18px;height:18px;border-radius:4px;border:2px solid #C0D0E0;display:flex;align-items:center;justify-content:center;flex-size:11px;font-size:11px;transition:all .15s;flex-shrink:0}
+.student-row.sel .s-check{background:#1F4E79;border-color:#1F4E79;color:#fff}
+.member-tags{display:flex;flex-wrap:wrap;gap:6px;min-height:34px;padding:6px;background:#F7FAFD;border-radius:7px;margin-bottom:8px;border:1px solid #E0E8F0}
+.mtag{background:#1F4E79;color:#fff;padding:3px 9px;border-radius:16px;font-size:12px;font-weight:500;display:flex;align-items:center;gap:5px}
+.mtag button{background:none;border:none;color:rgba(255,255,255,.8);cursor:pointer;font-size:14px;line-height:1;padding:0}
+
+/* Confirm */
+.confirm-card{background:#F0F6FF;border-radius:10px;padding:13px 15px;margin-bottom:1rem;border:1px solid #C5DAEA}
+.confirm-row{display:flex;justify-content:space-between;align-items:flex-start;padding:5px 0;border-bottom:1px solid #D8E8F5;font-size:13px}
+.confirm-row:last-child{border-bottom:none}
+.c-lbl{color:#555;font-weight:500}
+.c-val{color:#1F4E79;font-weight:600;text-align:left}
+
+/* Success */
+.success-wrap{text-align:center;padding:.5rem}
+.success-icon{font-size:44px;margin-bottom:.75rem}
+.success-title{font-size:17px;font-weight:700;color:#1F4E79;margin-bottom:.5rem}
+.success-info{background:#E6F1FB;border-radius:9px;padding:1rem;font-size:13px;line-height:1.8;text-align:right}
+
+/* Nav buttons */
+.reg-nav{display:flex;gap:10px;margin-top:1.25rem;justify-content:space-between}
+.btn-primary{padding:10px 22px;background:#1F4E79;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s;font-family:inherit}
+.btn-primary:hover{background:#1a4169}
+.btn-primary:disabled{background:#aaa;cursor:not-allowed}
+.btn-secondary{padding:10px 18px;background:#fff;color:#1F4E79;border:1.5px solid #C5DAEA;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit}
+.btn-secondary:hover{background:#EEF6FF}
+
+/* Teacher panel */
+.teacher-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2000;align-items:center;justify-content:center;direction:rtl}
+.teacher-overlay.open{display:flex}
+.teacher-box{background:#fff;border-radius:16px;width:min(800px,96vw);max-height:92vh;overflow-y:auto;box-shadow:0 12px 50px rgba(0,0,0,.3)}
+.teacher-head{background:linear-gradient(135deg,#1F4E79,#2E75B6);padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;border-radius:16px 16px 0 0}
+.teacher-head-title{color:#fff;font-size:17px;font-weight:700}
+.teacher-body{padding:1.5rem}
+.t-class-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem}
+.t-class-tab{padding:7px 16px;border:1.5px solid #D0DDE8;border-radius:20px;background:#fff;font-size:13px;cursor:pointer;font-weight:500;color:#555;transition:all .15s;font-family:inherit}
+.t-class-tab.active{background:#1F4E79;color:#fff;border-color:#1F4E79}
+.t-task-row{padding:11px 13px;border-bottom:1px solid #EEF2F8;display:flex;align-items:flex-start;gap:10px}
+.t-task-row:last-child{border-bottom:none}
+.t-task-name{font-size:13px;font-weight:600;color:#1F4E79;flex:1}
+.t-groups{display:flex;flex-direction:column;gap:4px;margin-top:4px}
+.t-group-row{font-size:12px;background:#F0F6FF;padding:4px 9px;border-radius:5px;display:flex;justify-content:space-between;align-items:center;color:#333}
+.t-del-btn{background:none;border:none;color:#c00;cursor:pointer;font-size:13px;padding:0 2px;font-family:inherit}
+.t-move-btn{background:none;border:1px solid #2E75B6;color:#2E75B6;border-radius:5px;cursor:pointer;font-size:10px;padding:2px 7px;margin-left:4px;font-family:inherit}
+.empty-note{color:#aaa;font-size:12.5px;font-style:italic}
+
+/* Realtime indicator */
+.realtime-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block;margin-left:5px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* Toast */
+.ww1-toast{position:fixed;bottom:22px;right:50%;transform:translateX(50%) translateY(80px);background:#1F4E79;color:#fff;border-radius:12px;padding:11px 22px;font-size:13px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,.2);transition:transform .3s;z-index:3000;white-space:nowrap;font-family:inherit;direction:rtl}
+.ww1-toast.show{transform:translateX(50%) translateY(0)}
+.ww1-toast.ok{background:#059669}
+.ww1-toast.err{background:#DC2626}
+
+
+/* Teacher panel tabs */
+.t-panel-tabs{display:flex;gap:0;border-bottom:2px solid #E0E8F0;margin-bottom:1.25rem}
+.t-panel-tab{padding:9px 16px;font-size:13px;font-weight:600;color:#888;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
+.t-panel-tab.active{color:#1F4E79;border-bottom-color:#1F4E79}
+.t-panel-section{display:none}.t-panel-section.active{display:block}
+
+/* Manage students */
+.manage-cls-select{width:100%;padding:9px 12px;border:1.5px solid #D0DDE8;border-radius:8px;font-size:13px;direction:rtl;margin-bottom:1rem;outline:none;font-family:inherit;background:#fff}
+.manage-cls-select:focus{border-color:#2E75B6}
+.student-manage-list{border:1px solid #E0E8F0;border-radius:9px;overflow:hidden;margin-bottom:1rem}
+.student-manage-row{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;border-bottom:1px solid #F0F4F8;font-size:13px}
+.student-manage-row:last-child{border-bottom:none}
+.student-manage-row:hover{background:#F7FAFD}
+.s-name{color:#1a1a2e;font-weight:500}
+.s-reg-badge{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600}
+.s-reg-badge.reg{background:#DCFCE7;color:#166534}
+.s-reg-badge.unreg{background:#FEF9C3;color:#854D0E}
+.s-remove-btn{background:none;border:1px solid #DC2626;color:#DC2626;border-radius:5px;padding:3px 9px;font-size:11px;cursor:pointer;font-family:inherit;font-weight:600}
+.s-remove-btn:hover{background:#FEE2E2}
+.add-student-row{display:flex;gap:8px;margin-bottom:1rem}
+.add-student-input{flex:1;padding:9px 12px;border:1.5px solid #D0DDE8;border-radius:8px;font-size:13px;direction:rtl;outline:none;font-family:inherit}
+.add-student-input:focus{border-color:#2E75B6}
+.add-student-btn{padding:9px 18px;background:#1F4E79;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.add-student-btn:hover{background:#1a4169}
+
+/* Custom task */
+.custom-task-form{background:#F7FAFD;border:1px solid #E0E8F0;border-radius:10px;padding:1rem;margin-bottom:1rem}
+.form-label{font-size:11px;font-weight:700;color:#888;letter-spacing:.05em;text-transform:uppercase;margin-bottom:5px;display:block}
+.form-input{width:100%;padding:9px 12px;border:1.5px solid #D0DDE8;border-radius:8px;font-size:13px;direction:rtl;outline:none;font-family:inherit;margin-bottom:.75rem}
+.form-input:focus{border-color:#2E75B6}
+.form-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:.75rem}
+.form-select{width:100%;padding:9px 10px;border:1.5px solid #D0DDE8;border-radius:8px;font-size:12px;direction:rtl;outline:none;font-family:inherit;background:#fff}
+.form-select:focus{border-color:#2E75B6}
+.submit-btn{width:100%;padding:11px;background:#1F4E79;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s}
+.submit-btn:hover{background:#1a4169}
+.submit-btn.green{background:#059669}.submit-btn.green:hover{background:#047857}
+
+/* Pending custom tasks */
+.pending-card{background:#FFF9C4;border:1.5px solid #F59E0B;border-radius:9px;padding:12px 14px;margin-bottom:8px}
+.pending-title{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:4px}
+.pending-members{font-size:12px;color:#555;margin-bottom:8px}
+.pending-actions{display:flex;gap:8px}
+.approve-btn{padding:6px 14px;background:#059669;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.reject-btn{padding:6px 14px;background:#DC2626;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -729,19 +891,9 @@ async function doRegister() {
 // ── TEACHER PANEL ──
 let tpClass = null;
 
-async function openTeacher() {
-  const pw = prompt('סיסמת מורה:');
-  if (pw !== PASS_TEACHER) return alert('סיסמה שגויה');
-  const choice = confirm('לכניסה ללוח שיבוצים לחץ אישור.\nלמצב עריכת תוכן לחץ ביטול.');
-  if (choice) {
-    tpClass = Object.keys(STUDENTS)[0];
-    document.getElementById('teacherPanel').classList.add('open');
-    document.getElementById('tpContent').innerHTML = '<div style="text-align:center;padding:2rem;color:#888">טוען...</div>';
-    await loadFromServer();
-    buildTpTabs(); buildTpContent();
-  } else {
-    enterEditMode();
-  }
+// Legacy teacher function - replaced by openTeacher() in Firebase script
+async function _legacyOpenTeacher() {
+  enterEditMode();
 }
 function closeTeacher() { document.getElementById('teacherPanel').classList.remove('open'); }
 
@@ -829,18 +981,21 @@ async function exportCSV() {
 
 // ── INIT: load registrations on page load ──
 window.addEventListener('DOMContentLoaded', async () => {
-  // Add teacher button to topbar
+  // Add teacher button to topbar (once)
   const tb = document.querySelector('.topbar');
   if (tb) {
     const btn = document.createElement('button');
     btn.textContent = '👩‍🏫 מורה';
-    btn.style.cssText = 'padding:6px 14px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:20px;cursor:pointer;font-size:12px;font-weight:600';
+    btn.style.cssText = 'padding:6px 14px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:20px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit';
     btn.onclick = openTeacher;
     tb.appendChild(btn);
   }
-  // Silent background load
-  await loadFromServer();
+  // Load editable content from server
   await loadContent();
+  // Load student overrides from Firebase
+  await loadStudentOverrides();
+  // Start Firebase real-time listener for registrations
+  startWw1Listener();
 });
 
 // ══════════════════════════════════════════
@@ -946,111 +1101,723 @@ async function saveEdit() {
 
 </script>
 
-<!-- FAB button -->
-<button class="reg-fab" onclick="openRegModal()">✏️ שיבוץ קבוצה</button>
+
+<!-- ✏️ FAB -->
+<button class="reg-fab" onclick="openClassSelector()">✏️ שיבוץ קבוצה</button>
+
+<!-- Class Selector -->
+<div class="cls-overlay" id="clsOverlay">
+  <div class="cls-box">
+    <div class="cls-head">
+      <div class="cls-head-title">בחרו את הכיתה שלכם</div>
+      <div class="cls-head-sub">כל כיתה רואה רק את השיבוצים שלה</div>
+    </div>
+    <div class="cls-body">
+      <div class="cls-grid" id="clsGrid"></div>
+      <button class="btn-secondary" style="width:100%" onclick="document.getElementById('clsOverlay').classList.remove('open')">ביטול</button>
+    </div>
+  </div>
+</div>
 
 <!-- Registration Modal -->
-<div class="modal-overlay" id="regModal">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title" id="modalTitle">שיבוץ קבוצה למטלה</div>
-      <button class="modal-close" onclick="closeRegModal()">✕</button>
+<div class="reg-overlay" id="regOverlay">
+  <div class="reg-modal">
+    <div class="reg-modal-head">
+      <div>
+        <div class="reg-modal-title" id="regModalTitle">שיבוץ קבוצה</div>
+        <div class="reg-modal-sub" id="regModalSub"></div>
+      </div>
+      <button class="reg-modal-close" onclick="closeRegModal()">✕</button>
     </div>
-    <div class="modal-body">
-      <div class="steps-bar">
-        <div class="step-ind active" id="si1"><span class="step-num">1</span>כיתה</div>
-        <div class="step-ind" id="si2"><span class="step-num">2</span>תלמידים</div>
-        <div class="step-ind" id="si3"><span class="step-num">3</span>מטלה</div>
-        <div class="step-ind" id="si4"><span class="step-num">4</span>אישור</div>
+    <div class="reg-modal-body">
+      <div class="reg-steps">
+        <div class="reg-step-ind active" id="rsi1"><span class="reg-step-num">1</span>מטלה</div>
+        <div class="reg-step-ind" id="rsi2"><span class="reg-step-num">2</span>תלמידים</div>
+        <div class="reg-step-ind" id="rsi3"><span class="reg-step-num">3</span>אישור</div>
       </div>
 
-      <!-- Step 1: Choose class -->
-      <div class="reg-step active" id="step1">
-        <p style="font-size:13.5px;color:#555;margin-bottom:1rem">בחרו את הכיתה שלכם:</p>
-        <div class="class-grid" id="classGrid"></div>
+      <!-- Step 1: Pick task -->
+      <div class="reg-step-panel active" id="rsp1">
+        <p style="font-size:13px;color:#555;margin-bottom:.75rem">בחרו מטלת חקר. מטלה שנבחרה כבר – מסומנת ונחסמת.</p>
+        <input class="search-input" id="taskSearchInput" placeholder="חפשו מטלה..." oninput="filterTaskCards()">
+        <div class="tasks-overview" id="tasksOverview"></div>
       </div>
 
-      <!-- Step 2: Choose students -->
-      <div class="reg-step" id="step2">
-        <div class="member-hint">בחרו בדיוק 3 תלמידים לקבוצה:</div>
-        <div class="member-tags" id="memberTags"><span style="color:#ccc;font-size:12px;padding:2px">אף תלמיד טרם נבחר</span></div>
-        <input class="search-input" id="studentSearch" placeholder="חפשו שם תלמיד..." oninput="filterStudents()">
-        <div class="student-list" id="studentList"></div>
+      <!-- Step 2: Pick students -->
+      <div class="reg-step-panel" id="rsp2">
+        <p style="font-size:12px;color:#888;margin-bottom:.5rem">בחרו בדיוק 3 תלמידים:</p>
+        <div class="member-tags" id="memberTags"><span style="color:#ccc;font-size:12px">אף תלמיד טרם נבחר</span></div>
+        <input class="search-input" id="studentSearchInput" placeholder="חפשו שם תלמיד..." oninput="filterStudentRows()">
+        <div class="student-scroll" id="studentScroll"></div>
       </div>
 
-      <!-- Step 3: Choose task -->
-      <div class="reg-step" id="step3">
-        <p style="font-size:13.5px;color:#555;margin-bottom:.75rem">בחרו מטלת חקר לקבוצתכם:</p>
-        <input class="task-search" id="taskSearch" placeholder="חפשו מטלה..." oninput="filterTasks()">
-        <div class="task-list" id="taskList"></div>
+      <!-- Step 3: Confirm -->
+      <div class="reg-step-panel" id="rsp3">
+        <div class="confirm-card" id="confirmCard"></div>
+        <p style="font-size:11.5px;color:#888;line-height:1.6">⚠️ לאחר השיבוץ לא ניתן לשנות. אם יש טעות – פנה למורה.</p>
       </div>
 
-      <!-- Step 4: Confirm -->
-      <div class="reg-step" id="step4">
-        <p style="font-size:13.5px;color:#555;margin-bottom:1rem">אנא ודאו שהפרטים נכונים לפני שיבוץ:</p>
-        <div class="confirm-box" id="confirmBox"></div>
-        <p style="font-size:12px;color:#888;line-height:1.6">⚠️ לאחר השיבוץ, לא ניתן לשנות. אם יש טעות פנו למורה.</p>
+      <!-- Step 4: Success -->
+      <div class="reg-step-panel" id="rsp4">
+        <div class="success-wrap">
+          <div class="success-icon">🎉</div>
+          <div class="success-title">השיבוץ הושלם בהצלחה!</div>
+          <div class="success-info" id="successInfo"></div>
+        </div>
       </div>
 
-      <!-- Step 5: Success -->
-      <div class="reg-step" id="step5">
-        <div class="success-icon">🎉</div>
-        <div class="success-title">השיבוץ הושלם בהצלחה!</div>
-        <div class="success-card" id="successCard"></div>
-        <p style="font-size:12px;color:#888;text-align:center">שמרו את פרטי השיבוץ. בהצלחה!</p>
-      </div>
-
-      <div class="modal-nav" id="modalNav">
-        <button class="btn-secondary" id="btnBack" onclick="regBack()" style="display:none">◀ חזרה</button>
-        <button class="btn-primary" id="btnNext" onclick="regNext()">המשך ▶</button>
+      <div class="reg-nav" id="regNav">
+        <button class="btn-secondary" id="regBtnBack" onclick="regBack()" style="display:none">◀ חזרה</button>
+        <button class="btn-primary" id="regBtnNext" onclick="regNext()">המשך ▶</button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- Teacher Panel -->
-<div class="teacher-panel" id="teacherPanel">
-  <div class="tp-box">
-    <div class="tp-head">
-      <div class="tp-title">📋 לוח שיבוצים – מבט מורה</div>
-      <button class="modal-close" onclick="closeTeacher()">✕</button>
+<div class="teacher-overlay" id="teacherOverlay">
+  <div class="teacher-box">
+    <div class="teacher-head">
+      <div class="teacher-head-title">👩‍🏫 לוח שיבוצים – מבט מורה <span class="realtime-dot"></span></div>
+      <button class="reg-modal-close" onclick="document.getElementById('teacherOverlay').classList.remove('open')">✕</button>
     </div>
-    <div class="tp-body">
-      <div class="tp-class-tabs" id="tpTabs"></div>
-      <div id="tpContent"></div>
-      <div style="margin-top:1rem;display:flex;gap:10px;flex-wrap:wrap">
-        <button class="btn-secondary" onclick="exportCSV()">⬇ ייצוא CSV</button>
-        <button class="btn-secondary" style="border-color:#c00;color:#c00" onclick="if(confirm('למחוק את כל השיבוצים?')){localStorage.removeItem(STORE_KEY);closeTeacher();alert('נמחק.')}">🗑 מחק הכל</button>
+    <div class="teacher-body">
+
+      <!-- Main tabs: Registrations | Manage Students | Custom Task -->
+      <div class="t-panel-tabs">
+        <button class="t-panel-tab active" onclick="switchTPanel(this,'tp-regs')">📋 שיבוצים</button>
+        <button class="t-panel-tab" onclick="switchTPanel(this,'tp-students')">👥 ניהול תלמידים</button>
+        <button class="t-panel-tab" onclick="switchTPanel(this,'tp-custom')">✦ מטלה חופשית</button>
       </div>
+
+      <!-- TAB 1: Registrations -->
+      <div class="t-panel-section active" id="tp-regs">
+        <div class="t-class-tabs" id="tClassTabs"></div>
+        <div id="tContent"></div>
+        <div style="margin-top:1rem;display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn-primary" onclick="exportRegistrationsCSV()">⬇ ייצוא CSV</button>
+          <button class="btn-secondary" style="border-color:#c00;color:#c00" onclick="if(confirm('למחוק את כל השיבוצים?')){firebase.database().ref('ww1_registrations').remove();ww1Toast('נמחק','ok')}">🗑 מחק הכל</button>
+        </div>
+      </div>
+
+      <!-- TAB 2: Manage Students -->
+      <div class="t-panel-section" id="tp-students">
+        <p style="font-size:13px;color:#555;margin-bottom:1rem">הוסיפו או הסירו תלמידים מכל כיתה. השינויים מיידיים.</p>
+        <label class="form-label">בחר כיתה</label>
+        <select class="manage-cls-select" id="manageCls" onchange="buildManageStudents()"></select>
+        <div class="add-student-row">
+          <input class="add-student-input" id="newStudentName" placeholder="שם התלמיד/ה החדש/ה..." onkeydown="if(event.key==='Enter')addStudent()">
+          <button class="add-student-btn" onclick="addStudent()">+ הוסף</button>
+        </div>
+        <div class="student-manage-list" id="studentManageList"></div>
+      </div>
+
+      <!-- TAB 3: Custom Task -->
+      <div class="t-panel-section" id="tp-custom">
+        <p style="font-size:13px;color:#555;margin-bottom:1rem">הקצו מטלה חופשית שאינה ברשימה לקבוצה, או אשרו הצעה ממתינה.</p>
+
+        <!-- Pending approvals -->
+        <div id="pendingCustomTasks" style="margin-bottom:1.25rem"></div>
+
+        <!-- Create custom task -->
+        <div class="custom-task-form">
+          <div style="font-size:13px;font-weight:700;color:#1F4E79;margin-bottom:.75rem">➕ הקצאת מטלה חופשית חדשה</div>
+          <label class="form-label">כיתה</label>
+          <select class="form-select" id="customCls" style="margin-bottom:.75rem">
+            <option value="">— בחר כיתה —</option>
+          </select>
+          <label class="form-label">שם המטלה החופשית</label>
+          <input class="form-input" id="customTaskName" placeholder='למשל: "הפסקת האש בבלגיה – נושא מחקר ייחודי"'>
+          <label class="form-label">תיאור קצר (אופציונלי)</label>
+          <input class="form-input" id="customTaskDesc" placeholder="תיאור קצר של הנושא...">
+          <label class="form-label">חברי הקבוצה (3 תלמידים)</label>
+          <div class="form-row">
+            <select class="form-select" id="customM1"><option value="">— חבר 1 —</option></select>
+            <select class="form-select" id="customM2"><option value="">— חבר 2 —</option></select>
+            <select class="form-select" id="customM3"><option value="">— חבר 3 —</option></select>
+          </div>
+          <button class="submit-btn green" onclick="createCustomTask()">✓ הקצה מטלה חופשית</button>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
 
+<div class="ww1-toast" id="ww1Toast"></div>
 
-<!-- Edit overlay -->
-<div class="edit-overlay" id="editOverlay">
-  <div class="edit-box">
-    <div class="edit-box-head">
-      <div class="edit-box-title" id="editBoxTitle">עריכת טקסט</div>
-      <button class="modal-close" onclick="closeEditBox()">✕</button>
-    </div>
-    <div class="edit-box-body">
-      <textarea class="edit-textarea" id="editTextarea" dir="rtl"></textarea>
-      <div class="edit-hint">לשורה חדשה – Enter. השינוי יישמר לכל התלמידים.</div>
-      <div class="edit-saving" id="editSaving"></div>
-      <div class="edit-nav">
-        <button class="btn-secondary" onclick="closeEditBox()">ביטול</button>
-        <button class="btn-primary" onclick="saveEdit()">💾 שמור</button>
+<script>
+
+// ══════════════════════════════════════════════
+// WW1 FIREBASE REGISTRATION SYSTEM
+// ══════════════════════════════════════════════
+
+// Firebase config (reuse from civics hub or create new)
+const WW1_FB_CONFIG = {
+  apiKey: "AIzaSyA8rBrBp_CJ5QQxoAML4WvR8_zOTwDRGC4",
+  authDomain: "civics-hub.firebaseapp.com",
+  databaseURL: "https://civics-hub-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "civics-hub"
+};
+
+// Initialize Firebase (check if already initialized)
+if (!firebase.apps || !firebase.apps.length) {
+  firebase.initializeApp(WW1_FB_CONFIG);
+}
+const ww1db = firebase.database();
+const ww1Ref = ww1db.ref('ww1_registrations');
+
+// State
+let ww1Registrations = {}; // { classKey: { taskNum: {id, members, timestamp} } }
+let regClass = '';          // currently selected class
+let regStep = 1;
+let regTask = null;         // selected A[] object
+let regMembers = [];        // [{name, id}]
+const WW1_TEACHER_PASS = 'yuval2104';
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+function ww1Toast(msg, type='') {
+  const el = document.getElementById('ww1Toast');
+  el.textContent = msg;
+  el.className = 'ww1-toast ' + type + ' show';
+  setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+// ── Firebase listener ─────────────────────────────────────────────────────────
+function startWw1Listener() {
+  ww1Ref.on('value', snap => {
+    ww1Registrations = snap.val() || {};
+    // Refresh task cards if modal open
+    if (document.getElementById('regOverlay').classList.contains('open') && regStep === 1) {
+      buildTaskCards();
+    }
+    // Refresh teacher panel if open
+    if (document.getElementById('teacherOverlay').classList.contains('open')) {
+      buildTeacherContent();
+    }
+  });
+}
+
+// Helper: get registration for a class+task
+function getClassTaskReg(cls, taskNum) {
+  return (ww1Registrations[cls] || {})[taskNum] || null;
+}
+
+// Helper: is this task taken by this class?
+function isTaskTaken(cls, taskNum) {
+  return !!getClassTaskReg(cls, taskNum);
+}
+
+// Helper: is student already registered in this class?
+function isStudentRegistered(cls, studentId) {
+  const clsRegs = ww1Registrations[cls] || {};
+  for (const reg of Object.values(clsRegs)) {
+    if (reg.members && reg.members.some(m => m.id === studentId)) return true;
+  }
+  return false;
+}
+
+// ── CLASS SELECTOR ────────────────────────────────────────────────────────────
+function openClassSelector() {
+  const grid = document.getElementById('clsGrid');
+  const classes = Object.keys(STUDENTS);
+  grid.innerHTML = classes.map(c =>
+    `<button class="cls-btn" data-cls="${c}">${c}</button>`
+  ).join('');
+  grid.querySelectorAll('.cls-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      regClass = btn.dataset.cls;
+      document.getElementById('clsOverlay').classList.remove('open');
+      openRegModal();
+    });
+  });
+  document.getElementById('clsOverlay').classList.add('open');
+}
+
+// ── REGISTRATION MODAL ────────────────────────────────────────────────────────
+function openRegModal() {
+  regStep = 1; regTask = null; regMembers = [];
+  document.getElementById('regModalTitle').textContent = 'שיבוץ קבוצה – ' + regClass;
+  document.getElementById('regModalSub').textContent = 'בחרו מטלה ואז 3 תלמידים';
+  showRegStep(1);
+  buildTaskCards();
+  document.getElementById('regOverlay').classList.add('open');
+}
+
+function closeRegModal() {
+  document.getElementById('regOverlay').classList.remove('open');
+}
+
+function showRegStep(n) {
+  regStep = n;
+  document.querySelectorAll('.reg-step-panel').forEach((el,i) => el.classList.toggle('active', i+1===n));
+  ['rsi1','rsi2','rsi3'].forEach((id,i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('active', i+1===n);
+    el.classList.toggle('done', i+1<n);
+  });
+  const back = document.getElementById('regBtnBack');
+  const next = document.getElementById('regBtnNext');
+  const nav  = document.getElementById('regNav');
+  if (n===4) { nav.style.display='none'; return; }
+  nav.style.display = 'flex';
+  back.style.display = n>1 ? 'block' : 'none';
+  next.textContent = n===3 ? '✅ אשר שיבוץ' : 'המשך ▶';
+  next.disabled = false;
+  if (n===1) { setTimeout(() => { next.disabled = !regTask; }, 50); }
+  if (n===2) { buildStudentList(); next.disabled = regMembers.length !== 3; }
+  if (n===3) { buildConfirm(); }
+}
+
+async function regNext() {
+  if (regStep===1) {
+    if (!regTask) return ww1Toast('בחרו מטלה','err');
+    showRegStep(2);
+  } else if (regStep===2) {
+    if (regMembers.length!==3) return ww1Toast('יש לבחור בדיוק 3 תלמידים','err');
+    // Check none already registered
+    for (const m of regMembers) {
+      if (isStudentRegistered(regClass, m.id)) {
+        return ww1Toast(m.name + ' כבר משובץ/ת בכיתה זו','err');
+      }
+    }
+    showRegStep(3);
+  } else if (regStep===3) {
+    await doRegister();
+  }
+}
+
+function regBack() { if (regStep > 1) showRegStep(regStep - 1); }
+
+// ── STEP 1: Task cards ────────────────────────────────────────────────────────
+function buildTaskCards() {
+  filterTaskCards();
+}
+
+function filterTaskCards() {
+  const q = (document.getElementById('taskSearchInput')||{}).value||'';
+  const container = document.getElementById('tasksOverview');
+  if (!container) return;
+  const list = A.filter(a => !q || a.t.includes(q) || String(a.n).includes(q));
+  container.innerHTML = list.map(a => {
+    const taken = isTaskTaken(regClass, a.n);
+    const sel = regTask && regTask.n === a.n;
+    return `<div class="task-card${taken?' taken':''}${sel?' selected-task':''}" data-n="${a.n}" data-taken="${taken}">
+      ${taken ? '<div class="taken-pill">תפוסה בכיתה</div>' : ''}
+      <div class="task-card-top">
+        <span class="task-card-emoji">${a.e}</span>
+        <span class="task-card-num">${a.n}</span>
+        <span class="task-card-name">${a.t}</span>
       </div>
-    </div>
-  </div>
-</div>
+      <div class="task-card-sub">${a.sub}</div>
+    </div>`;
+  }).join('');
+  container.querySelectorAll('.task-card').forEach(el => {
+    el.addEventListener('click', () => {
+      if (el.dataset.taken==='true') return;
+      selectTask(parseInt(el.dataset.n));
+    });
+  });
+}
 
-<!-- Edit mode indicator bar -->
-<div class="edit-mode-bar" id="editModeBar">
-  ✏️ מצב עריכה פעיל – לחץ על כל טקסט לעריכה
-  <button onclick="exitEditMode()">צא מעריכה</button>
-</div>
+function selectTask(n) {
+  regTask = A.find(a => a.n===n) || null;
+  filterTaskCards();
+  document.getElementById('regBtnNext').disabled = !regTask;
+}
 
+// ── STEP 2: Students ──────────────────────────────────────────────────────────
+function buildStudentList() {
+  document.getElementById('studentSearchInput').value = '';
+  filterStudentRows();
+  renderMemberTags();
+}
+
+function filterStudentRows() {
+  const q = (document.getElementById('studentSearchInput')||{}).value||'';
+  const classStudents = getStudentsForClass(regClass);
+  const list = classStudents.filter(s => s.name.includes(q));
+  const scroll = document.getElementById('studentScroll');
+  scroll.innerHTML = list.map(s => {
+    const sel = regMembers.some(m => m.id===s.id);
+    return `<div class="student-row${sel?' sel':''}" data-id="${s.id}" data-name="${s.name}">
+      <div class="s-check">${sel?'✓':''}</div>
+      <span>${s.name}</span>
+    </div>`;
+  }).join('');
+  scroll.querySelectorAll('.student-row').forEach(el => {
+    el.addEventListener('click', () => toggleStudent(el.dataset.id, el.dataset.name));
+  });
+}
+
+function toggleStudent(id, name) {
+  const idx = regMembers.findIndex(m => m.id===id);
+  if (idx >= 0) { regMembers.splice(idx,1); }
+  else { if (regMembers.length>=3) return ww1Toast('ניתן לבחור עד 3 תלמידים','err'); regMembers.push({id,name}); }
+  renderMemberTags();
+  filterStudentRows();
+  document.getElementById('regBtnNext').disabled = regMembers.length!==3;
+}
+
+function renderMemberTags() {
+  const el = document.getElementById('memberTags');
+  if (!regMembers.length) { el.innerHTML='<span style="color:#ccc;font-size:12px">אף תלמיד טרם נבחר</span>'; return; }
+  el.innerHTML = regMembers.map(m =>
+    `<div class="mtag">${m.name}<button data-id="${m.id}" data-name="${m.name}">×</button></div>`
+  ).join('');
+  el.querySelectorAll('button').forEach(btn =>
+    btn.addEventListener('click', () => toggleStudent(btn.dataset.id, btn.dataset.name))
+  );
+}
+
+// ── STEP 3: Confirm ───────────────────────────────────────────────────────────
+function buildConfirm() {
+  document.getElementById('confirmCard').innerHTML = `
+    <div class="confirm-row"><span class="c-lbl">כיתה</span><span class="c-val">${regClass}</span></div>
+    <div class="confirm-row"><span class="c-lbl">מטלה</span><span class="c-val">${regTask.n}. ${regTask.t}</span></div>
+    <div class="confirm-row"><span class="c-lbl">חברי הקבוצה</span><span class="c-val">${regMembers.map(m=>m.name).join('<br>')}</span></div>`;
+}
+
+// ── REGISTER ──────────────────────────────────────────────────────────────────
+async function doRegister() {
+  document.getElementById('regBtnNext').disabled = true;
+  document.getElementById('regBtnNext').textContent = 'שומר...';
+  // Double-check task not taken
+  const snap = await ww1db.ref(`ww1_registrations/${regClass}/${regTask.n}`).get();
+  if (snap.exists()) {
+    document.getElementById('regBtnNext').disabled = false;
+    document.getElementById('regBtnNext').textContent = '✅ אשר שיבוץ';
+    return ww1Toast('המטלה נתפסה זה עתה! בחרו אחרת.','err');
+  }
+  const reg = {
+    taskNum: regTask.n,
+    taskName: regTask.t,
+    classKey: regClass,
+    members: regMembers,
+    timestamp: new Date().toLocaleString('he-IL')
+  };
+  await ww1db.ref(`ww1_registrations/${regClass}/${regTask.n}`).set(reg);
+  document.getElementById('successInfo').innerHTML =
+    `<strong>כיתה:</strong> ${regClass}<br>
+     <strong>מטלה:</strong> ${regTask.n}. ${regTask.t}<br>
+     <strong>קבוצה:</strong> ${regMembers.map(m=>m.name).join(', ')}`;
+  showRegStep(4);
+  ww1Toast('השיבוץ הושלם!','ok');
+}
+
+// ── TEACHER PANEL ─────────────────────────────────────────────────────────────
+let teacherActiveClass = null;
+
+function openTeacher() {
+  const pw = prompt('סיסמת מורה:');
+  if (pw !== WW1_TEACHER_PASS) return alert('סיסמה שגויה');
+  const choice = confirm('לכניסה ללוח שיבוצים לחץ אישור.\nלמצב עריכת תוכן הנחיות לחץ ביטול.');
+  if (choice) {
+    teacherActiveClass = Object.keys(STUDENTS)[0];
+    buildTeacherTabs();
+    buildTeacherContent();
+    buildManageStudentsInit();
+    buildCustomTaskInit();
+    buildPendingCustomTasks();
+    document.getElementById('teacherOverlay').classList.add('open');
+    // reset to first tab
+    switchTPanel(document.querySelector('.t-panel-tab'), 'tp-regs');
+  } else {
+    enterEditMode();
+  }
+}
+
+function switchTPanel(btn, id) {
+  document.querySelectorAll('.t-panel-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.t-panel-section').forEach(s => s.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+  if (id === 'tp-students') buildManageStudents();
+  if (id === 'tp-custom') { buildCustomTaskInit(); buildPendingCustomTasks(); }
+}
+
+// ── MANAGE STUDENTS ────────────────────────────────────────────────────────────
+// STUDENTS is normally const - we shadow it with a mutable version
+let _studentsOverride = null; // { classKey: [{name,id}] } – stored in Firebase
+
+async function loadStudentOverrides() {
+  const snap = await ww1db.ref('ww1_students').get();
+  if (snap.exists()) _studentsOverride = snap.val();
+}
+
+function getStudentsForClass(cls) {
+  if (_studentsOverride && _studentsOverride[cls]) return _studentsOverride[cls];
+  return STUDENTS[cls] || [];
+}
+
+async function saveStudentsForClass(cls, list) {
+  _studentsOverride = _studentsOverride || {};
+  _studentsOverride[cls] = list;
+  await ww1db.ref(`ww1_students/${cls}`).set(list);
+  // Refresh student list in reg modal if open and same class
+  if (regClass === cls) filterStudentRows();
+}
+
+function buildManageStudentsInit() {
+  const sel = document.getElementById('manageCls');
+  if (!sel) return;
+  sel.innerHTML = Object.keys(STUDENTS).map(c => `<option value="${c}">${c}</option>`).join('');
+}
+
+function buildManageStudents() {
+  const cls = document.getElementById('manageCls').value;
+  if (!cls) return;
+  const students = getStudentsForClass(cls);
+  const clsRegs = ww1Registrations[cls] || {};
+  // Which students are registered?
+  const regIds = new Set();
+  Object.values(clsRegs).forEach(r => r.members && r.members.forEach(m => regIds.add(m.id)));
+
+  const el = document.getElementById('studentManageList');
+  if (!students.length) { el.innerHTML='<div style="padding:1rem;color:#aaa;font-size:13px">אין תלמידים בכיתה זו</div>'; return; }
+  el.innerHTML = students.map((s,i) => {
+    const isReg = regIds.has(s.id);
+    return `<div class="student-manage-row">
+      <div>
+        <span class="s-name">${s.name}</span>
+        <span class="s-reg-badge ${isReg?'reg':'unreg'}">${isReg?'משובץ/ת':'לא משובץ/ת'}</span>
+      </div>
+      <button class="s-remove-btn" data-idx="${i}" data-cls="${cls}" ${isReg?'disabled title="לא ניתן להסיר – תלמיד משובץ"':''}>✕ הסר</button>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('.s-remove-btn:not([disabled])').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const c = btn.dataset.cls;
+      const idx = parseInt(btn.dataset.idx);
+      const list = [...getStudentsForClass(c)];
+      const name = list[idx].name;
+      if (!confirm(`להסיר את ${name} מכיתה ${c}?`)) return;
+      list.splice(idx, 1);
+      await saveStudentsForClass(c, list);
+      buildManageStudents();
+      ww1Toast(`${name} הוסר/ה מהכיתה`, 'ok');
+    });
+  });
+}
+
+async function addStudent() {
+  const cls = document.getElementById('manageCls').value;
+  const name = document.getElementById('newStudentName').value.trim();
+  if (!cls) return ww1Toast('בחר כיתה','err');
+  if (!name) return ww1Toast('הזן שם תלמיד','err');
+  const list = [...getStudentsForClass(cls)];
+  if (list.some(s => s.name === name)) return ww1Toast('תלמיד זה כבר קיים בכיתה','err');
+  const newStudent = { name, id: 'custom_' + Date.now() };
+  list.push(newStudent);
+  await saveStudentsForClass(cls, list);
+  document.getElementById('newStudentName').value = '';
+  buildManageStudents();
+  ww1Toast(`${name} נוסף/ה לכיתה ${cls}`, 'ok');
+}
+
+// ── CUSTOM TASK ────────────────────────────────────────────────────────────────
+function buildCustomTaskInit() {
+  // Populate class and student selects
+  const clsSel = document.getElementById('customCls');
+  if (clsSel && !clsSel.options.length > 1) {
+    clsSel.innerHTML = '<option value="">— בחר כיתה —</option>' +
+      Object.keys(STUDENTS).map(c => `<option value="${c}">${c}</option>`).join('');
+  }
+  clsSel && clsSel.addEventListener('change', populateCustomStudentSelects);
+}
+
+function populateCustomStudentSelects() {
+  const cls = document.getElementById('customCls').value;
+  const students = cls ? getStudentsForClass(cls) : [];
+  ['customM1','customM2','customM3'].forEach((id,i) => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    const ph = ['— חבר 1 —','— חבר 2 —','— חבר 3 —'][i];
+    sel.innerHTML = `<option value="">${ph}</option>` +
+      students.map(s => `<option value="${s.id}" data-name="${s.name}">${s.name}</option>`).join('');
+  });
+}
+
+async function createCustomTask() {
+  const cls = document.getElementById('customCls').value;
+  const taskName = document.getElementById('customTaskName').value.trim();
+  const taskDesc = document.getElementById('customTaskDesc').value.trim();
+
+  if (!cls) return ww1Toast('בחר כיתה','err');
+  if (!taskName) return ww1Toast('הזן שם מטלה','err');
+
+  const members = ['customM1','customM2','customM3'].map(id => {
+    const sel = document.getElementById(id);
+    if (!sel || !sel.value) return null;
+    const opt = sel.options[sel.selectedIndex];
+    return { id: sel.value, name: opt.dataset.name || opt.textContent };
+  }).filter(Boolean);
+
+  if (members.length < 2) return ww1Toast('בחר לפחות 2 חברי קבוצה','err');
+  if (new Set(members.map(m=>m.id)).size !== members.length) return ww1Toast('אותו תלמיד נבחר פעמיים','err');
+
+  // Use a special key for custom tasks: "custom_TIMESTAMP"
+  const customKey = 'custom_' + Date.now();
+  const reg = {
+    taskNum: customKey,
+    taskName,
+    taskDesc,
+    classKey: cls,
+    members,
+    isCustom: true,
+    approvedByTeacher: true,
+    timestamp: new Date().toLocaleString('he-IL')
+  };
+  await ww1db.ref(`ww1_registrations/${cls}/${customKey}`).set(reg);
+  ww1Toast('✓ מטלה חופשית הוקצתה!', 'ok');
+  // Reset form
+  ['customTaskName','customTaskDesc'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  ['customM1','customM2','customM3'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  buildPendingCustomTasks();
+  buildTeacherContent();
+}
+
+// ── PENDING CUSTOM TASKS (submitted by students, awaiting approval) ─────────────
+function buildPendingCustomTasks() {
+  const el = document.getElementById('pendingCustomTasks');
+  if (!el) return;
+  const pending = [];
+  for (const [cls, tasks] of Object.entries(ww1Registrations)) {
+    for (const [tn, reg] of Object.entries(tasks)) {
+      if (reg.isCustom && !reg.approvedByTeacher) {
+        pending.push({ cls, tn, ...reg });
+      }
+    }
+  }
+  if (!pending.length) { el.innerHTML=''; return; }
+  el.innerHTML = `<div style="font-size:13px;font-weight:700;color:#B45309;margin-bottom:.5rem">⏳ הצעות ממתינות לאישור (${pending.length})</div>` +
+    pending.map(p => `
+    <div class="pending-card">
+      <div class="pending-title">✦ ${p.taskName}</div>
+      <div class="pending-members">כיתה ${p.cls} · ${p.members.map(m=>m.name).join(', ')}</div>
+      <div class="pending-actions">
+        <button class="approve-btn" data-cls="${p.cls}" data-tn="${p.tn}">✓ אשר</button>
+        <button class="reject-btn" data-cls="${p.cls}" data-tn="${p.tn}">✕ דחה</button>
+      </div>
+    </div>`).join('');
+  el.querySelectorAll('.approve-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      await ww1db.ref(`ww1_registrations/${btn.dataset.cls}/${btn.dataset.tn}/approvedByTeacher`).set(true);
+      ww1Toast('אושר!','ok');
+      buildPendingCustomTasks();
+      buildTeacherContent();
+    });
+  });
+  el.querySelectorAll('.reject-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('לדחות ולמחוק את ההצעה?')) return;
+      await ww1db.ref(`ww1_registrations/${btn.dataset.cls}/${btn.dataset.tn}`).remove();
+      ww1Toast('נדחה ונמחק','ok');
+      buildPendingCustomTasks();
+    });
+  });
+}
+
+function buildTeacherTabs() {
+  const el = document.getElementById('tClassTabs');
+  const classes = [...Object.keys(STUDENTS), 'all'];
+  el.innerHTML = classes.map(c =>
+    `<button class="t-class-tab${c===teacherActiveClass?' active':''}" data-cls="${c}">${c==='all'?'כל הכיתות':c}</button>`
+  ).join('');
+  el.querySelectorAll('.t-class-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      teacherActiveClass = btn.dataset.cls;
+      buildTeacherTabs();
+      buildTeacherContent();
+    });
+  });
+}
+
+function buildTeacherContent() {
+  const el = document.getElementById('tContent');
+  const classes = teacherActiveClass==='all' ? Object.keys(STUDENTS) : [teacherActiveClass];
+  let html = '';
+  for (const cls of classes) {
+    if (teacherActiveClass==='all') html += `<h3 style="font-size:13px;font-weight:700;color:#1F4E79;margin:1rem 0 .5rem;border-bottom:1px solid #EEF2F8;padding-bottom:4px">${cls}</h3>`;
+    const clsRegs = ww1Registrations[cls] || {};
+    const keys = Object.keys(clsRegs).sort((a,b)=>{
+      // numeric tasks first, then custom
+      const na=parseInt(a), nb=parseInt(b);
+      if(!isNaN(na)&&!isNaN(nb)) return na-nb;
+      if(!isNaN(na)) return -1; if(!isNaN(nb)) return 1;
+      return 0;
+    });
+    if (!keys.length) { html += `<div class="empty-note">אין שיבוצים עדיין</div>`; continue; }
+    for (const tn of keys) {
+      const reg = clsRegs[tn];
+      const isCustom = reg.isCustom;
+      const task = isCustom ? null : A.find(a => a.n===parseInt(tn));
+      const taskDisplay = isCustom
+        ? `<span style="background:rgba(124,79,255,.12);border:1px solid rgba(124,79,255,.3);color:#7c4fff;border-radius:4px;padding:1px 6px;font-size:9px;font-weight:700;margin-left:5px">חופשי</span> ${reg.taskName}`
+        : `${task?task.e+' '+task.t:'מטלה '+tn}`;
+      const pendingBadge = (isCustom && !reg.approvedByTeacher)
+        ? `<span style="background:#FEF3C7;border:1px solid #F59E0B;color:#B45309;border-radius:4px;padding:1px 6px;font-size:9px;font-weight:700;margin-left:5px">ממתין לאישור</span>`
+        : '';
+      html += `<div class="t-task-row">
+        <div style="flex:1">
+          <div class="t-task-name">${isCustom?'✦':tn+'.'} ${taskDisplay}${pendingBadge}</div>
+          <div class="t-groups">
+            <div class="t-group-row">
+              <span>${reg.members.map(m=>m.name).join(', ')} · ${reg.timestamp}</span>
+              <div>
+                ${!isCustom?`<button class="t-move-btn" data-cls="${cls}" data-tn="${tn}">↔ שנה מטלה</button>`:''}
+                <button class="t-del-btn" data-cls="${cls}" data-tn="${tn}">🗑</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }
+  }
+  el.innerHTML = html || '<div class="empty-note">אין שיבוצים</div>';
+  // Bind delete
+  el.querySelectorAll('.t-del-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('למחוק שיבוץ זה?')) return;
+      await ww1db.ref(`ww1_registrations/${btn.dataset.cls}/${btn.dataset.tn}`).remove();
+      ww1Toast('נמחק','ok');
+    });
+  });
+  // Bind move
+  el.querySelectorAll('.t-move-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const newTn = prompt('מספר המטלה החדשה (1-23):');
+      if (!newTn) return;
+      const cls = btn.dataset.cls;
+      const oldTn = btn.dataset.tn;
+      const snap = await ww1db.ref(`ww1_registrations/${cls}/${newTn}`).get();
+      if (snap.exists()) return ww1Toast('מטלה ' + newTn + ' כבר תפוסה בכיתה זו','err');
+      const regData = (ww1Registrations[cls]||{})[oldTn];
+      if (!regData) return;
+      await ww1db.ref(`ww1_registrations/${cls}/${newTn}`).set({...regData, taskNum:parseInt(newTn)});
+      await ww1db.ref(`ww1_registrations/${cls}/${oldTn}`).remove();
+      ww1Toast('הועבר למטלה ' + newTn,'ok');
+    });
+  });
+}
+
+function exportRegistrationsCSV() {
+  let csv = '\uFEFF"כיתה","מטלה","שם המטלה","חבר 1","חבר 2","חבר 3","תאריך"\n';
+  for (const [cls, tasks] of Object.entries(ww1Registrations)) {
+    for (const [tn, reg] of Object.entries(tasks)) {
+      const task = A.find(a => a.n===parseInt(tn));
+      csv += `"${cls}","${tn}","${task?task.t:''}","${reg.members[0]?.name||''}","${reg.members[1]?.name||''}","${reg.members[2]?.name||''}","${reg.timestamp}"\n`;
+    }
+  }
+  const a = document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='ww1_assignments.csv'; a.click();
+  ww1Toast('CSV הורד','ok');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+;
+
+</script>
 </body>
 </html>
