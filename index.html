@@ -573,6 +573,40 @@ a{color:inherit;text-decoration:none}
   .ww1-search-wrap input { width: 130px; }
 }
 
+
+/* ══ CLASS TABS ══ */
+.cls-tabs-bar {
+  background: #1F4E79;
+  padding: 0 2rem;
+}
+.cls-tabs-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  gap: 4px;
+  padding: 10px 0 0;
+}
+.cls-tab {
+  padding: 10px 24px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255,255,255,.65);
+  background: rgba(255,255,255,.1);
+  border: none;
+  border-radius: 10px 10px 0 0;
+  cursor: pointer;
+  transition: all .2s;
+  letter-spacing: .02em;
+}
+.cls-tab:hover { background: rgba(255,255,255,.18); color: #fff; }
+.cls-tab.active {
+  background: #F4F7FB;
+  color: #1F4E79;
+}
+.ww1-inner { background: #F4F7FB; }
+.ww1-tabs { background: #fff; border-bottom: 2px solid #E0E8F0; padding: 0 2rem; }
+
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
@@ -620,29 +654,44 @@ a{color:inherit;text-decoration:none}
 
 <div class="ww1-page">
 
-  <!-- TABS -->
-  <div class="ww1-tabs">
-    <div class="ww1-tabs-inner">
-      <button class="ww1-tab active" data-tab="topics">🗂 מטלות חקר <span class="ww1-count" id="ww1-av-count">23</span></button>
-      <button class="ww1-tab" data-tab="groups">👥 שיבוצים <span class="ww1-count" id="ww1-gr-count">0</span></button>
+  <!-- CLASS TABS -->
+  <div class="cls-tabs-bar">
+    <div class="cls-tabs-inner">
+      <button class="cls-tab active" data-cls="ט' 2">כיתה ט׳2</button>
+      <button class="cls-tab" data-cls="ט' 6">כיתה ט׳6</button>
+      <button class="cls-tab" data-cls="ט' 7">כיתה ט׳7</button>
+      <button class="cls-tab" data-cls="ט' 8">כיתה ט׳8</button>
     </div>
   </div>
 
-  <!-- PANEL: Topics -->
-  <div class="ww1-panel active" id="ww1-panel-topics">
-    <div class="ww1-stats" id="ww1-stats"></div>
-    <div class="ww1-search-row">
-      <div class="ww1-search-wrap">
-        <span>🔍</span>
-        <input id="ww1-search" placeholder="חפשו מטלה..." oninput="filterCards()">
+  <!-- CLASS PANEL (same for all, driven by activeClass) -->
+  <div class="ww1-inner">
+
+    <!-- Sub-tabs: Tasks | Registrations -->
+    <div class="ww1-tabs">
+      <div class="ww1-tabs-inner">
+        <button class="ww1-tab active" data-tab="topics">🗂 מטלות חקר <span class="ww1-count" id="ww1-av-count">23</span></button>
+        <button class="ww1-tab" data-tab="groups">👥 שיבוצי הכיתה <span class="ww1-count" id="ww1-gr-count">0</span></button>
       </div>
     </div>
-    <div class="ww1-grid" id="ww1-grid"></div>
-  </div>
 
-  <!-- PANEL: Groups -->
-  <div class="ww1-panel" id="ww1-panel-groups">
-    <div class="ww1-groups-list" id="ww1-groups-list"></div>
+    <!-- PANEL: Topics -->
+    <div class="ww1-panel active" id="ww1-panel-topics">
+      <div class="ww1-stats" id="ww1-stats"></div>
+      <div class="ww1-search-row">
+        <div class="ww1-search-wrap">
+          <span>🔍</span>
+          <input id="ww1-search" placeholder="חפשו מטלה..." oninput="filterCards()">
+        </div>
+      </div>
+      <div class="ww1-grid" id="ww1-grid"></div>
+    </div>
+
+    <!-- PANEL: Groups -->
+    <div class="ww1-panel" id="ww1-panel-groups">
+      <div class="ww1-groups-list" id="ww1-groups-list"></div>
+    </div>
+
   </div>
 
 </div>
@@ -779,64 +828,74 @@ function isMineTask(taskNum) {
 }
 
 function updateWw1Stats() {
-  const regs = ww1Registrations;
-  let taken = 0, groups = 0;
-  for (const cls of Object.keys(regs)) {
-    const clsRegs = regs[cls] || {};
-    const keys = Object.keys(clsRegs);
-    groups += keys.length;
-    if (keys.length > 0) taken++;
-  }
-  // Count unique tasks taken across all classes
-  const takenTasks = new Set();
-  for (const cls of Object.keys(regs)) {
-    for (const tn of Object.keys(regs[cls] || {})) takenTasks.add(tn);
-  }
+  const clsRegs = ww1Registrations[regClass] || {};
+  const takenCount = Object.keys(clsRegs).length;
   const stats = document.getElementById('ww1-stats');
   if (stats) stats.innerHTML = `
-    <div class="ww1-stat"><div class="ww1-stat-val">${23 - takenTasks.size}</div><div class="ww1-stat-lbl">מטלות פנויות</div></div>
-    <div class="ww1-stat"><div class="ww1-stat-val" style="color:#DC2626">${takenTasks.size}</div><div class="ww1-stat-lbl">מטלות תפוסות</div></div>
-    <div class="ww1-stat"><div class="ww1-stat-val" style="color:#059669">${groups}</div><div class="ww1-stat-lbl">קבוצות נרשמו</div></div>
+    <div class="ww1-stat"><div class="ww1-stat-val">${23 - takenCount}</div><div class="ww1-stat-lbl">מטלות פנויות בכיתה</div></div>
+    <div class="ww1-stat"><div class="ww1-stat-val" style="color:#DC2626">${takenCount}</div><div class="ww1-stat-lbl">מטלות תפוסות</div></div>
+    <div class="ww1-stat"><div class="ww1-stat-val" style="color:#059669">${takenCount}</div><div class="ww1-stat-lbl">קבוצות נרשמו</div></div>
   `;
   const avC = document.getElementById('ww1-av-count');
-  if (avC) avC.textContent = 23 - takenTasks.size;
+  if (avC) avC.textContent = 23 - takenCount;
   const grC = document.getElementById('ww1-gr-count');
-  if (grC) grC.textContent = groups;
+  if (grC) grC.textContent = takenCount;
 }
 
 function renderGroups() {
   const el = document.getElementById('ww1-groups-list');
   if (!el) return;
-  const regs = ww1Registrations;
-  let html = '';
-  for (const cls of Object.keys(regs)) {
-    for (const [tn, reg] of Object.entries(regs[cls] || {})) {
-      const task = A.find(a => a.n === parseInt(tn));
-      html += `<div class="ww1-group-card">
-        <div class="ww1-group-label">כיתה ${cls} · מטלה ${tn}</div>
-        <div class="ww1-group-task">${task ? task.e + ' ' + task.t : reg.taskName || 'מטלה ' + tn}</div>
-        <div class="ww1-group-members">${(reg.members||[]).map(m =>
-          `<div class="ww1-group-member"><div class="ww1-group-av">${m.name.charAt(0)}</div>${m.name}</div>`
-        ).join('')}</div>
-        <div class="ww1-group-date">${reg.timestamp || ''}</div>
-      </div>`;
-    }
+  const clsRegs = (ww1Registrations[regClass] || {});
+  const entries = Object.entries(clsRegs);
+  if (!entries.length) {
+    el.innerHTML = '<div class="ww1-empty"><div class="ww1-empty-icon">👥</div><p>אין שיבוצים עדיין לכיתה ' + regClass + '</p></div>';
+    return;
   }
-  el.innerHTML = html || '<div class="ww1-empty"><div class="ww1-empty-icon">👥</div><p>אין שיבוצים עדיין</p></div>';
+  el.innerHTML = entries.sort((a,b) => parseInt(a[0]) - parseInt(b[0])).map(([tn, reg]) => {
+    const task = A.find(a => a.n === parseInt(tn));
+    return `<div class="ww1-group-card">
+      <div class="ww1-group-label">מטלה ${tn}</div>
+      <div class="ww1-group-task">${task ? task.e + ' ' + task.t : reg.taskName || 'מטלה ' + tn}</div>
+      <div class="ww1-group-members">${(reg.members||[]).map(m =>
+        `<div class="ww1-group-member"><div class="ww1-group-av">${m.name.charAt(0)}</div>${m.name}</div>`
+      ).join('')}</div>
+      <div class="ww1-group-date">${reg.timestamp || ''}</div>
+    </div>`;
+  }).join('');
 }
 
-// Tab switching
+// ── Tab & Class switching ─────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+
+  // Sub-tabs (topics / groups)
   document.querySelectorAll('.ww1-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.ww1-tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.ww1-panel').forEach(p => p.classList.remove('active'));
       tab.classList.add('active');
-      const id = 'ww1-panel-' + tab.dataset.tab;
-      document.getElementById(id)?.classList.add('active');
+      document.getElementById('ww1-panel-' + tab.dataset.tab)?.classList.add('active');
       if (tab.dataset.tab === 'groups') renderGroups();
     });
   });
+
+  // Class tabs
+  document.querySelectorAll('.cls-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.cls-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      regClass = tab.dataset.cls;
+      // reset to topics sub-tab
+      document.querySelectorAll('.ww1-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.ww1-panel').forEach(p => p.classList.remove('active'));
+      document.querySelector('.ww1-tab[data-tab="topics"]')?.classList.add('active');
+      document.getElementById('ww1-panel-topics')?.classList.add('active');
+      if (document.getElementById('ww1-search')) document.getElementById('ww1-search').value = '';
+      renderCards();
+    });
+  });
+
+  // Set default active class
+  regClass = "ט' 2";
 });
 
 function render() { /* replaced by card system */ }
@@ -931,7 +990,7 @@ const STUDENTS = {"ט' 2":[{"name":"אהרונוב אופיר","id":"220046833"}
 
 
 <!-- ✏️ FAB -->
-<button class="reg-fab" onclick="openClassSelector()">✏️ שיבוץ קבוצה</button>
+<button class="reg-fab" onclick="openRegForCurrentClass()">✏️ שיבוץ קבוצה</button>
 
 <!-- Class Selector -->
 <div class="cls-overlay" id="clsOverlay">
@@ -1148,6 +1207,16 @@ function isStudentRegistered(cls, studentId) {
 }
 
 // ── CLASS SELECTOR ────────────────────────────────────────────────────────────
+function openRegForCurrentClass() {
+  if (!regClass) return ww1Toast('בחרו כיתה בלשוניות למעלה','err');
+  regStep = 1; regTask = null; regMembers = [];
+  document.getElementById('regModalTitle').textContent = 'שיבוץ קבוצה – ' + regClass;
+  document.getElementById('regModalSub').textContent = 'בחרו מטלה ואז 2-3 תלמידים';
+  showRegStep(1);
+  buildTaskCards();
+  document.getElementById('regOverlay').classList.add('open');
+}
+
 function openClassSelector() {
   const grid = document.getElementById('clsGrid');
   const classes = Object.keys(STUDENTS);
@@ -1249,6 +1318,16 @@ function filterTaskCards() {
       selectTask(parseInt(el.dataset.n));
     });
   });
+}
+
+function selectTaskAndRegister(n) {
+  selectTask(n);
+  regStep = 1; regMembers = [];
+  document.getElementById('regModalTitle').textContent = 'שיבוץ קבוצה – ' + regClass;
+  document.getElementById('regModalSub').textContent = 'בחרו מטלה ואז 2-3 תלמידים';
+  showRegStep(2);
+  buildStudentList();
+  document.getElementById('regOverlay').classList.add('open');
 }
 
 function selectTask(n) {
