@@ -670,6 +670,7 @@ a{color:inherit;text-decoration:none}
 }
 
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 </head>
@@ -1010,8 +1011,14 @@ function openTaskDetail(n) {
         <div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:3px">${a.e} ${a.t}</div>
         <div style="font-size:13px;color:rgba(255,255,255,.75);font-style:italic">${a.sub}</div>
       </div>
-      <button onclick="document.getElementById('taskDetailOverlay').classList.remove('open')"
-        style="background:rgba(255,255,255,.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;flex-shrink:0">✕</button>
+      <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+        <button onclick="downloadTaskDocx(${a.n})"
+          style="padding:7px 14px;background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;white-space:nowrap">
+          ⬇ הורד Word
+        </button>
+        <button onclick="document.getElementById('taskDetailOverlay').classList.remove('open')"
+          style="background:rgba(255,255,255,.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;flex-shrink:0">✕</button>
+      </div>
     </div>`;
 
   const introHtml = a.intro.map((p,i) => `<p style="font-size:13.5px;color:#3a3a4e;line-height:1.8;margin-bottom:.6rem" data-editable="task_${a.n}_intro_${i}" data-label="מבוא ${i+1} – מטלה ${a.n}">${cc('task_'+a.n+'_intro_'+i,p)}</p>`).join('');
@@ -1912,6 +1919,180 @@ async function submitCustomStudentTask() {
   await ww1db.ref(`ww1_registrations/${regClass}/${customKey}`).set(reg);
   document.getElementById('customStudentOverlay').classList.remove('open');
   ww1Toast('✦ ההצעה נשלחה! ממתינה לאישור המורה','ok');
+}
+
+
+// ── WORD DOCUMENT BUILDER ─────────────────────────────────────────────────────
+function downloadTaskDocx(taskNum) {
+  const a = A.find(x => x.n === taskNum);
+  if (!a) return;
+
+  const zip = new JSZip();
+
+  const CT = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+  <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+  <Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/>
+</Types>`;
+
+  const RELS = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`;
+
+  const WORD_RELS = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+  <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings" Target="settings.xml"/>
+</Relationships>`;
+
+  const STYLES = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:docDefaults><w:rPrDefault><w:rPr>
+    <w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/>
+    <w:sz w:val="24"/><w:szCs w:val="24"/>
+    <w:lang w:val="he-IL" w:bidi="he-IL"/>
+  </w:rPr></w:rPrDefault>
+  <w:pPrDefault><w:pPr>
+    <w:bidi/><w:jc w:val="both"/>
+    <w:spacing w:line="360" w:lineRule="auto"/>
+  </w:pPr></w:pPrDefault></w:docDefaults>
+</w:styles>`;
+
+  const SETTINGS = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:settings xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:themeFontLang w:val="he-IL" w:bidi="he-IL"/>
+</w:settings>`;
+
+  function esc(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function P(text, opts={}) {
+    const sz = opts.sz || 24;
+    const color = opts.color || '000000';
+    const bold = opts.bold ? '<w:b/><w:bCs/>' : '';
+    const align = opts.align || 'both';
+    const before = opts.before || 0;
+    const after = opts.after !== undefined ? opts.after : 80;
+    const bdr = opts.border ? `<w:pBdr><w:bottom w:val="single" w:sz="6" w:space="1" w:color="1F4E79"/></w:pBdr>` : '';
+    const bullet = opts.bullet ? '<w:ind w:right="360" w:hanging="360"/>' : '';
+    const t = opts.bullet ? ('• ' + text) : text;
+    return `<w:p><w:pPr><w:bidi/>${bdr}<w:spacing w:before="${before}" w:after="${after}" w:line="360" w:lineRule="auto"/>${bullet}<w:jc w:val="${align}"/></w:pPr>
+    <w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/>${bold}<w:color w:val="${color}"/><w:sz w:val="${sz}"/><w:szCs w:val="${sz}"/><w:rtl/><w:lang w:val="he-IL" w:bidi="he-IL"/></w:rPr>
+    <w:t xml:space="preserve">${esc(t)}</w:t></w:r></w:p>`;
+  }
+  function LINE() { return `<w:p><w:pPr><w:bidi/><w:spacing w:before="0" w:after="40" w:line="360" w:lineRule="auto"/></w:pPr><w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr><w:t xml:space="preserve">________________________________________________</w:t></w:r></w:p>`; }
+  function H1(t) { return P(t, {bold:true, sz:30, color:'1F4E79', before:200, after:100, border:true, align:'right'}); }
+  function H2(t) { return P(t, {bold:true, sz:26, color:'2E75B6', before:160, after:60, align:'right'}); }
+  function BODY(t) { return P(t, {before:0, after:80}); }
+  function BOLD(t) { return P(t, {bold:true, before:0, after:60}); }
+  function BUL(t) { return P(t, {bullet:true, before:40, after:40}); }
+  function EMPTY() { return P(' ', {before:0, after:40}); }
+
+  let paras = [];
+
+  // Title
+  paras.push(P(`${a.e} ${a.t}`, {bold:true, sz:32, color:'1F4E79', align:'center', before:200, after:60, border:true}));
+  paras.push(P(a.sub, {sz:22, color:'6B7280', align:'center', after:60}));
+  paras.push(P('מלחמת העולם הראשונה (1914–1918) | מטלת חקר מס\' ' + a.n + ' מתוך 23', {sz:20, color:'888888', align:'center', after:200}));
+
+  // Registration fields
+  paras.push(H1('פרטי הגשה'));
+  paras.push(BOLD('כיתה:')); paras.push(LINE());
+  paras.push(BOLD('שמות חברי הקבוצה:')); paras.push(LINE()); paras.push(LINE());
+  paras.push(BOLD('תאריך הגשה:')); paras.push(BODY('עד 25.5.2026'));
+  paras.push(BOLD('הגשה למייל:')); paras.push(BODY('1005530585@hityash.org.il'));
+  paras.push(EMPTY());
+
+  // Intro
+  paras.push(H1('מבוא ורציונל פדגוגי'));
+  a.intro.forEach(p => paras.push(BODY(p)));
+  paras.push(EMPTY());
+
+  // Focus areas
+  paras.push(H1('מוקדי החקר'));
+  paras.push(BODY(a.focusIntro));
+  a.focusRows.forEach(row => {
+    paras.push(BOLD(row[0] + (row[1] ? ' – ' + row[1] : '')));
+    if (row[2]) paras.push(BODY(row[2]));
+  });
+  paras.push(EMPTY());
+
+  // Spark
+  if (a.spark) {
+    paras.push(H1(a.spark.title));
+    paras.push(BODY(a.spark.txt));
+    paras.push(EMPTY());
+  }
+
+  // Tasks
+  paras.push(H1('משימות החקר והניתוח'));
+  a.tasks.forEach((t, i) => {
+    paras.push(H2((i+1) + '. ' + t.q));
+    paras.push(BODY(t.d));
+    if (t.ch) {
+      paras.push(BOLD('💡 אתגר חשיבה:'));
+      paras.push(BODY(t.ch));
+    }
+    paras.push(EMPTY());
+    // Answer space
+    paras.push(BOLD('תשובה:'));
+    paras.push(LINE()); paras.push(LINE()); paras.push(LINE());
+    paras.push(EMPTY());
+  });
+
+  // Critical question
+  paras.push(H1('שאלת העמדה הביקורתית'));
+  paras.push(BOLD(a.cq));
+  paras.push(BODY(a.cd));
+  a.creqs.forEach(r => paras.push(BUL(r)));
+  paras.push(EMPTY());
+  paras.push(BOLD('עמדתנו הביקורתית:'));
+  paras.push(LINE()); paras.push(LINE()); paras.push(LINE()); paras.push(LINE());
+  paras.push(EMPTY());
+
+  // Visual task
+  paras.push(H1('משימת ניתוח חזותי'));
+  paras.push(BODY(a.visual));
+  paras.push(EMPTY());
+  paras.push(BOLD('תיאור הויזואל שבחרנו:'));
+  paras.push(LINE()); paras.push(LINE());
+  paras.push(EMPTY());
+
+  // Sources
+  paras.push(H1('מקורות מידע'));
+  a.sources.forEach(s => paras.push(BUL(s)));
+  paras.push(EMPTY());
+  paras.push(BOLD('מקורות נוספים שמצאנו:'));
+  paras.push(LINE()); paras.push(LINE());
+
+  const bodyXml = paras.join('\n');
+
+  const DOC = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:body>${bodyXml}
+<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134"/><w:bidi/></w:sectPr>
+</w:body></w:document>`;
+
+  zip.file('[Content_Types].xml', CT);
+  zip.file('_rels/.rels', RELS);
+  zip.file('word/_rels/document.xml.rels', WORD_RELS);
+  zip.file('word/document.xml', DOC);
+  zip.file('word/styles.xml', STYLES);
+  zip.file('word/settings.xml', SETTINGS);
+
+  const filename = `מטלה_${a.n}_${a.t.replace(/\s+/g,'_').replace(/['"]/g,'')}.docx`;
+  zip.generateAsync({type:'blob', mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'})
+    .then(blob => {
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(link.href);
+      ww1Toast('✓ הקובץ הורד!', 'ok');
+    });
 }
 
 </script>
