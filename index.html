@@ -960,40 +960,7 @@ function renderGroups() {
 }
 
 // ── Tab & Class switching ─────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-
-  // Sub-tabs (topics / groups)
-  document.querySelectorAll('.ww1-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.ww1-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.ww1-panel').forEach(p => p.classList.remove('active'));
-      tab.classList.add('active');
-      document.getElementById('ww1-panel-' + tab.dataset.tab)?.classList.add('active');
-      if (tab.dataset.tab === 'groups') renderGroups();
-    });
-  });
-
-  // Class tabs
-  document.querySelectorAll('.cls-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.cls-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      regClass = tab.dataset.cls;
-      // reset to topics sub-tab
-      document.querySelectorAll('.ww1-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.ww1-panel').forEach(p => p.classList.remove('active'));
-      document.querySelector('.ww1-tab[data-tab="topics"]')?.classList.add('active');
-      document.getElementById('ww1-panel-topics')?.classList.add('active');
-      if (document.getElementById('ww1-search')) document.getElementById('ww1-search').value = '';
-      renderCards();
-    });
-  });
-
-  // Set default active class
-  regClass = "ט' 2";
-  // Render cards immediately (Firebase data may already be loaded)
-  renderCards();
-});
+// (merged into main DOMContentLoaded init)
 
 function render() { /* replaced by card system */ }
 
@@ -1079,12 +1046,7 @@ function openTaskDetail(n) {
 }
 
 // Close on overlay click
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('taskDetailOverlay')?.addEventListener('click', e => {
-    if (e.target === document.getElementById('taskDetailOverlay'))
-      document.getElementById('taskDetailOverlay').classList.remove('open');
-  });
-});
+// (merged into main DOMContentLoaded init)
 buildSidebar();render();
 
 
@@ -2111,6 +2073,57 @@ function downloadTaskDocx(taskNum) {
       ww1Toast('✓ הקובץ הורד!', 'ok');
     });
 }
+
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  // Start Firebase listener
+  startWw1Listener();
+
+  // Set default class
+  regClass = "ט' 2";
+
+  // Sub-tabs
+  document.querySelectorAll('.ww1-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.ww1-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.ww1-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('ww1-panel-' + tab.dataset.tab)?.classList.add('active');
+      if (tab.dataset.tab === 'groups') renderGroups();
+    });
+  });
+
+  // Class tabs
+  document.querySelectorAll('.cls-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.cls-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      regClass = tab.dataset.cls;
+      document.querySelectorAll('.ww1-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.ww1-panel').forEach(p => p.classList.remove('active'));
+      document.querySelector('.ww1-tab[data-tab="topics"]')?.classList.add('active');
+      document.getElementById('ww1-panel-topics')?.classList.add('active');
+      if (document.getElementById('ww1-search')) document.getElementById('ww1-search').value = '';
+      renderCards();
+    });
+  });
+
+  // Task detail overlay close
+  document.getElementById('taskDetailOverlay')?.addEventListener('click', e => {
+    if (e.target === document.getElementById('taskDetailOverlay'))
+      document.getElementById('taskDetailOverlay').classList.remove('open');
+  });
+
+  // Load editable content
+  loadContent();
+
+  // Load student overrides
+  loadStudentOverrides();
+
+  // Initial render (Firebase data may not be ready yet, renders empty grid)
+  renderCards();
+});
 
 </script>
 
