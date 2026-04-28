@@ -669,6 +669,30 @@ a{color:inherit;text-decoration:none}
   .topbar-badges { display: none; }
 }
 
+
+/* ══ GROUPS PANEL ══ */
+.grp-stats { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:1rem; }
+.grp-stat { background:#fff; border:1px solid #E0E8F0; border-radius:10px;
+  padding:10px 18px; display:flex; flex-direction:column; align-items:center;
+  min-width:100px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+.grp-stat.ok { background:rgba(5,150,105,.06); border-color:rgba(5,150,105,.25); }
+.grp-stat.warn { background:rgba(220,38,38,.05); border-color:rgba(220,38,38,.2); }
+.grp-stat-val { font-size:24px; font-weight:800; color:#1F4E79; }
+.grp-stat.ok .grp-stat-val { color:#059669; }
+.grp-stat.warn .grp-stat-val { color:#DC2626; }
+.grp-stat-lbl { font-size:11px; color:#888; margin-top:2px; }
+
+.unrg-box { background:#fff; border:1.5px solid #E0E8F0; border-radius:12px;
+  padding:14px 16px; margin-bottom:1rem; }
+.unrg-box.ok { background:rgba(5,150,105,.06); border-color:rgba(5,150,105,.3);
+  color:#065f46; font-weight:600; font-size:13px; }
+.unrg-title { font-size:12px; font-weight:700; color:#DC2626; margin-bottom:8px; }
+.unrg-names { display:flex; flex-wrap:wrap; gap:6px; }
+.unrg-tag { background:#FEF2F2; border:1px solid rgba(220,38,38,.2); border-radius:20px;
+  padding:3px 11px; font-size:12px; color:#DC2626; font-weight:500; }
+
+.ww1-groups-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:12px; }
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -938,23 +962,63 @@ function updateWw1Stats() {
 function renderGroups() {
   const el = document.getElementById('ww1-groups-list');
   if (!el) return;
+
   const clsRegs = ww1Registrations[clsToKey(regClass)] || ww1Registrations[regClass] || {};
-  const entries = Object.entries(clsRegs);
-  if (!entries.length) {
-    el.innerHTML = '<div class="ww1-empty"><div class="ww1-empty-icon">👥</div><p>אין שיבוצים עדיין לכיתה ' + regClass + '</p></div>';
-    return;
-  }
-  el.innerHTML = entries.sort((a,b) => parseInt(a[0]) - parseInt(b[0])).map(([tn, reg]) => {
-    const task = A.find(a => a.n === parseInt(tn));
-    return `<div class="ww1-group-card">
-      <div class="ww1-group-label">מטלה ${tn}</div>
-      <div class="ww1-group-task">${task ? task.e + ' ' + task.t : reg.taskName || 'מטלה ' + tn}</div>
-      <div class="ww1-group-members">${(reg.members||[]).map(m =>
-        `<div class="ww1-group-member"><div class="ww1-group-av">${m.name.charAt(0)}</div>${m.name}</div>`
-      ).join('')}</div>
-      <div class="ww1-group-date">${reg.timestamp || ''}</div>
+  const entries = Object.entries(clsRegs).filter(([k]) => !isNaN(parseInt(k)));
+
+  // Collect registered student IDs
+  const registeredIds = new Set();
+  entries.forEach(([, reg]) => {
+    (reg.members || []).forEach(m => { if (m.id) registeredIds.add(m.id); });
+  });
+
+  // Get all students in current class
+  const allStudents = STUDENTS[regClass] || [];
+  const unregistered = allStudents.filter(s => !registeredIds.has(s.id));
+  const total = allStudents.length;
+  const regCount = total - unregistered.length;
+
+  // Build stats bar
+  const statsHtml = `
+    <div class="grp-stats">
+      <div class="grp-stat ok">
+        <div class="grp-stat-val">${regCount}</div>
+        <div class="grp-stat-lbl">נרשמו לקבוצה</div>
+      </div>
+      <div class="grp-stat warn">
+        <div class="grp-stat-val">${unregistered.length}</div>
+        <div class="grp-stat-lbl">טרם נרשמו</div>
+      </div>
+      <div class="grp-stat">
+        <div class="grp-stat-val">${total}</div>
+        <div class="grp-stat-lbl">סה"כ תלמידים</div>
+      </div>
     </div>`;
-  }).join('');
+
+  // Build unregistered list
+  const unregHtml = unregistered.length === 0
+    ? `<div class="unrg-box ok">✅ כל תלמידי ${regClass} נרשמו לקבוצה!</div>`
+    : `<div class="unrg-box">
+        <div class="unrg-title">⚠️ טרם נרשמו (${unregistered.length} תלמידים):</div>
+        <div class="unrg-names">${unregistered.map(s => `<span class="unrg-tag">${s.name}</span>`).join('')}</div>
+       </div>`;
+
+  // Build group cards
+  const cardsHtml = entries.length === 0
+    ? `<div class="ww1-empty"><div class="ww1-empty-icon">👥</div><p>אין שיבוצים עדיין לכיתה ${regClass}</p></div>`
+    : entries.sort((a,b) => parseInt(a[0]) - parseInt(b[0])).map(([tn, reg]) => {
+        const task = A.find(a => a.n === parseInt(tn));
+        return `<div class="ww1-group-card">
+          <div class="ww1-group-label">מטלה ${tn}</div>
+          <div class="ww1-group-task">${task ? task.e + ' ' + task.t : reg.taskName || 'מטלה ' + tn}</div>
+          <div class="ww1-group-members">${(reg.members||[]).map(m =>
+            `<div class="ww1-group-member"><div class="ww1-group-av">${m.name.charAt(0)}</div>${m.name}</div>`
+          ).join('')}</div>
+          <div class="ww1-group-date">${reg.timestamp || ''}</div>
+        </div>`;
+      }).join('');
+
+  el.innerHTML = statsHtml + unregHtml + `<div class="ww1-groups-grid">${cardsHtml}</div>`;
 }
 
 // ── Tab & Class switching ─────────────────────────────────────────────────────
