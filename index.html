@@ -1276,6 +1276,9 @@ function ww1Toast(msg, type='') {
 function startWw1Listener() {
   ww1Ref.on('value', snap => {
     ww1Registrations = snap.val() || {};
+    console.log('Firebase data received:', JSON.stringify(ww1Registrations));
+    console.log('Current regClass:', regClass, '| clsToKey:', clsToKey(regClass));
+    console.log('Data for current class:', ww1Registrations[clsToKey(regClass)]);
     // Refresh card grid – use setTimeout to ensure DOM is ready
     if (document.getElementById('ww1-grid')) {
       renderCards();
