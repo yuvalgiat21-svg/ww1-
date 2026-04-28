@@ -788,6 +788,8 @@ function filterCards() {
 function renderCards(q='') {
   const grid = document.getElementById('ww1-grid');
   if (!grid) return;
+  // Ensure regClass is set (default to first class)
+  if (!regClass) regClass = Object.keys(STUDENTS)[0];
   const list = A.filter(a => !q || a.t.includes(q) || String(a.n).includes(q));
   grid.innerHTML = list.map(a => {
     const taken = isTaskTaken(regClass || '_none_', a.n) || isTaskTakenAnyClass(a.n);
@@ -859,17 +861,20 @@ function isMineTask(taskNum) {
 
 function updateWw1Stats() {
   const clsRegs = ww1Registrations[regClass] || {};
-  const takenCount = Object.keys(clsRegs).length;
+  const allEntries = Object.entries(clsRegs);
+  // Count only numeric tasks (1-23) for the "תפוסות מתוך 23" count
+  const numericTaken = allEntries.filter(([k]) => !isNaN(parseInt(k))).length;
+  const totalGroups = allEntries.length;
   const stats = document.getElementById('ww1-stats');
   if (stats) stats.innerHTML = `
-    <div class="ww1-stat"><div class="ww1-stat-val">${23 - takenCount}</div><div class="ww1-stat-lbl">מטלות פנויות בכיתה</div></div>
-    <div class="ww1-stat"><div class="ww1-stat-val" style="color:#DC2626">${takenCount}</div><div class="ww1-stat-lbl">מטלות תפוסות</div></div>
-    <div class="ww1-stat"><div class="ww1-stat-val" style="color:#059669">${takenCount}</div><div class="ww1-stat-lbl">קבוצות נרשמו</div></div>
+    <div class="ww1-stat"><div class="ww1-stat-val">${23 - numericTaken}</div><div class="ww1-stat-lbl">מטלות פנויות בכיתה</div></div>
+    <div class="ww1-stat"><div class="ww1-stat-val" style="color:#DC2626">${numericTaken}</div><div class="ww1-stat-lbl">מטלות תפוסות</div></div>
+    <div class="ww1-stat"><div class="ww1-stat-val" style="color:#059669">${totalGroups}</div><div class="ww1-stat-lbl">קבוצות נרשמו</div></div>
   `;
   const avC = document.getElementById('ww1-av-count');
-  if (avC) avC.textContent = 23 - takenCount;
+  if (avC) avC.textContent = 23 - numericTaken;
   const grC = document.getElementById('ww1-gr-count');
-  if (grC) grC.textContent = takenCount;
+  if (grC) grC.textContent = totalGroups;
 }
 
 function renderGroups() {
@@ -1446,6 +1451,9 @@ async function doRegister() {
      <strong>קבוצה:</strong> ${regMembers.map(m=>m.name).join(', ')}`;
   showRegStep(4);
   ww1Toast('השיבוץ הושלם!','ok');
+  // Force immediate UI update (Firebase listener may have slight delay)
+  renderCards();
+  updateWw1Stats();
 }
 
 // ── TEACHER PANEL ─────────────────────────────────────────────────────────────
