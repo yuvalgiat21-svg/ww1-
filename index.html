@@ -1436,19 +1436,7 @@ function buildConfirm() {
 async function doRegister() {
   document.getElementById('regBtnNext').disabled = true;
   document.getElementById('regBtnNext').textContent = 'שומר...';
-  // Double-check task not taken
-  const snap = await ww1db.ref(`ww1_registrations/${regClass}/${regTask.n}`).get();
-  if (snap.exists()) {
-    // Update local cache with server data so UI reflects reality
-    if (!ww1Registrations[regClass]) ww1Registrations[regClass] = {};
-    ww1Registrations[regClass][String(regTask.n)] = snap.val();
-    renderCards();
-    updateWw1Stats();
-    document.getElementById('regBtnNext').disabled = false;
-    document.getElementById('regBtnNext').textContent = '✅ אשר שיבוץ';
-    closeRegModal();
-    return ww1Toast('המטלה כבר תפוסה! הכרטיסייה עודכנה.','err');
-  }
+
   const reg = {
     taskNum: regTask.n,
     taskName: regTask.t,
@@ -1456,21 +1444,29 @@ async function doRegister() {
     members: regMembers,
     timestamp: new Date().toLocaleString('he-IL')
   };
-  await ww1db.ref(`ww1_registrations/${regClass}/${regTask.n}`).set(reg);
-  
-  // ── Update local cache IMMEDIATELY (don't wait for Firebase listener) ──
+
+  try {
+    await ww1db.ref(`ww1_registrations/${regClass}/${regTask.n}`).set(reg);
+  } catch(e) {
+    document.getElementById('regBtnNext').disabled = false;
+    document.getElementById('regBtnNext').textContent = '✅ אשר שיבוץ';
+    return ww1Toast('שגיאה בשמירה – נסו שוב','err');
+  }
+
+  // ── Update local cache IMMEDIATELY ──────────────────────────────────────
   if (!ww1Registrations[regClass]) ww1Registrations[regClass] = {};
   ww1Registrations[regClass][String(regTask.n)] = reg;
-  
+
+  // ── Update UI ────────────────────────────────────────────────────────────
+  renderCards();
+  updateWw1Stats();
+
   document.getElementById('successInfo').innerHTML =
     `<strong>כיתה:</strong> ${regClass}<br>
      <strong>מטלה:</strong> ${regTask.n}. ${regTask.t}<br>
      <strong>קבוצה:</strong> ${regMembers.map(m=>m.name).join(', ')}`;
   showRegStep(4);
   ww1Toast('השיבוץ הושלם!','ok');
-  // Now render with updated local data
-  renderCards();
-  updateWw1Stats();
 }
 
 // ── TEACHER PANEL ─────────────────────────────────────────────────────────────
