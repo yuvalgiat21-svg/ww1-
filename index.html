@@ -899,7 +899,7 @@ function renderCards(q='') {
 }
 
 function isCustomTaskTaken() {
-  const clsRegs = ww1Registrations[clsToKey(regClass)] || {};
+  const clsRegs = ww1Registrations[clsToKey(regClass)] || ww1Registrations[regClass] || {};
   return Object.values(clsRegs).some(r => r.isCustom && r.approvedByTeacher !== false);
 }
 
@@ -919,7 +919,7 @@ function isMineTask(taskNum) {
 }
 
 function updateWw1Stats() {
-  const clsRegs = ww1Registrations[clsToKey(regClass)] || {};
+  const clsRegs = ww1Registrations[clsToKey(regClass)] || ww1Registrations[regClass] || {};
   const allEntries = Object.entries(clsRegs);
   // Count only numeric tasks (1-23) for the "תפוסות מתוך 23" count
   const numericTaken = allEntries.filter(([k]) => !isNaN(parseInt(k))).length;
@@ -939,7 +939,7 @@ function updateWw1Stats() {
 function renderGroups() {
   const el = document.getElementById('ww1-groups-list');
   if (!el) return;
-  const clsRegs = (ww1Registrations[clsToKey(regClass)] || {});
+  const clsRegs = ww1Registrations[clsToKey(regClass)] || ww1Registrations[regClass] || {};
   const entries = Object.entries(clsRegs);
   if (!entries.length) {
     el.innerHTML = '<div class="ww1-empty"><div class="ww1-empty-icon">👥</div><p>אין שיבוצים עדיין לכיתה ' + regClass + '</p></div>';
@@ -1295,7 +1295,7 @@ function startWw1Listener() {
 
 // Helper: get registration for a class+task
 function getClassTaskReg(cls, taskNum) {
-  const clsRegs = ww1Registrations[clsToKey(cls)] || {};
+  const clsRegs = ww1Registrations[clsToKey(cls)] || ww1Registrations[cls] || {};
   return clsRegs[taskNum] || clsRegs[String(taskNum)] || null;
 }
 
@@ -1307,13 +1307,13 @@ function clsToKey(cls) {
 }
 
 function isTaskTaken(cls, taskNum) {
-  const clsRegs = ww1Registrations[clsToKey(cls)] || {};
+  const clsRegs = ww1Registrations[clsToKey(cls)] || ww1Registrations[cls] || {};
   return !!(clsRegs[taskNum] || clsRegs[String(taskNum)]);
 }
 
 // Helper: is student already registered in this class?
 function isStudentRegistered(cls, studentId) {
-  const clsRegs = ww1Registrations[clsToKey(cls)] || {};
+  const clsRegs = ww1Registrations[clsToKey(cls)] || ww1Registrations[cls] || {};
   for (const reg of Object.values(clsRegs)) {
     if (reg.members && reg.members.some(m => m.id === studentId)) return true;
   }
@@ -1782,7 +1782,7 @@ function buildTeacherContent() {
   let html = '';
   for (const cls of classes) {
     if (teacherActiveClass==='all') html += `<h3 style="font-size:13px;font-weight:700;color:#1F4E79;margin:1rem 0 .5rem;border-bottom:1px solid #EEF2F8;padding-bottom:4px">${cls}</h3>`;
-    const clsRegs = ww1Registrations[clsToKey(cls)] || {};
+    const clsRegs = ww1Registrations[clsToKey(cls)] || ww1Registrations[cls] || {};
     const keys = Object.keys(clsRegs).sort((a,b)=>{
       // numeric tasks first, then custom
       const na=parseInt(a), nb=parseInt(b);
