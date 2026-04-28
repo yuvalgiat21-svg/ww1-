@@ -611,6 +611,64 @@ a{color:inherit;text-decoration:none}
 .ww1-card-custom { border-color: rgba(124,79,255,.4) !important; border-style: dashed !important; background: rgba(124,79,255,.03) !important; }
 .ww1-card-custom:hover { border-color: #7c4fff !important; background: rgba(124,79,255,.07) !important; }
 
+
+/* ══ MOBILE RESPONSIVE ══ */
+@media(max-width:600px){
+  .topbar { padding: 0 1rem; height: auto; flex-wrap: wrap; gap: 6px; padding: 10px 1rem; }
+  .topbar-title { font-size: 13px; }
+  .topbar-sub { font-size: 10px; }
+  .topbar-badges { gap: 4px; flex-wrap: wrap; }
+  .tbadge { font-size: 10px; padding: 2px 7px; }
+  
+  .instructions-bar { padding: .6rem 1rem; }
+  .inst-grid { grid-template-columns: 1fr; gap: 6px; }
+  .inst-item { padding: 7px 10px; font-size: 11.5px; }
+
+  .cls-tabs-bar { padding: 0 .5rem; }
+  .cls-tabs-inner { gap: 2px; }
+  .cls-tab { padding: 8px 12px; font-size: 12px; }
+
+  .ww1-tabs { padding: 0 .75rem; }
+  .ww1-tab { padding: 10px 12px; font-size: 12px; }
+
+  .ww1-panel { padding: .75rem; }
+  .ww1-stats { gap: 6px; }
+  .ww1-stat { padding: 8px 12px; }
+  .ww1-stat-val { font-size: 18px; }
+  .ww1-stat-lbl { font-size: 10px; }
+
+  .ww1-search-row { flex-direction: column; align-items: stretch; }
+  .ww1-search-wrap { width: 100%; }
+  .ww1-search-wrap input { width: 100%; }
+
+  .ww1-grid { grid-template-columns: 1fr; gap: 10px; }
+  .ww1-card { padding: 13px; }
+  .ww1-card-title { font-size: 13px; }
+
+  .ww1-groups-list { grid-template-columns: 1fr; }
+
+  .reg-modal { border-radius: 12px 12px 0 0; position: fixed; bottom: 0; left: 0; right: 0; width: 100%; max-height: 90vh; }
+  .reg-overlay { align-items: flex-end; padding: 0; }
+
+  .teacher-box { border-radius: 12px 12px 0 0; position: fixed; bottom: 0; left: 0; right: 0; width: 100%; max-height: 92vh; }
+  .teacher-overlay { align-items: flex-end; padding: 0; }
+
+  .task-detail-modal { border-radius: 12px 12px 0 0; position: fixed; bottom: 0; left: 0; right: 0; width: 100%; max-height: 90vh; }
+  .task-detail-overlay { align-items: flex-end; padding: 0; }
+
+  .reg-fab { bottom: 1rem; left: 1rem; padding: 10px 16px; font-size: 13px; }
+
+  .t-panel-tabs { flex-wrap: wrap; }
+  .t-panel-tab { font-size: 11px; padding: 7px 10px; }
+
+  .form-row { grid-template-columns: 1fr; }
+}
+
+@media(max-width:400px){
+  .cls-tab { padding: 7px 8px; font-size: 11px; }
+  .topbar-badges { display: none; }
+}
+
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
@@ -1254,8 +1312,8 @@ function isStudentRegistered(cls, studentId) {
 function openRegForCurrentClass() {
   if (!regClass) return ww1Toast('בחרו כיתה בלשוניות למעלה','err');
   regStep = 1; regTask = null; regMembers = [];
-  document.getElementById('regModalTitle').textContent = 'שיבוץ קבוצה – ' + regClass;
-  document.getElementById('regModalSub').textContent = 'בחרו מטלה ואז 2-3 תלמידים';
+  document.getElementById('regModalTitle').textContent = (isTeacherMode ? '👩‍🏫 שיבוץ מורה – ' : 'שיבוץ קבוצה – ') + regClass;
+  document.getElementById('regModalSub').textContent = isTeacherMode ? 'מורה: ניתן לשבץ ללא הגבלה' : 'בחרו מטלה ואז 2-3 תלמידים';
   showRegStep(1);
   buildTaskCards();
   document.getElementById('regOverlay').classList.add('open');
@@ -1316,13 +1374,19 @@ function showRegStep(n) {
 async function regNext() {
   if (regStep===1) {
     if (!regTask) return ww1Toast('בחרו מטלה','err');
+    // Teacher can override taken tasks
+    if (!isTeacherMode && isTaskTaken(regClass, regTask.n)) {
+      return ww1Toast('מטלה זו כבר תפוסה בכיתה – כמורה תוכל לדרוס','err');
+    }
     showRegStep(2);
   } else if (regStep===2) {
     if (regMembers.length < 2 || regMembers.length > 3) return ww1Toast('יש לבחור 2 עד 3 תלמידים','err');
-    // Check none already registered
-    for (const m of regMembers) {
-      if (isStudentRegistered(regClass, m.id)) {
-        return ww1Toast(m.name + ' כבר משובץ/ת בכיתה זו','err');
+    // Check none already registered (skip for teacher)
+    if (!isTeacherMode) {
+      for (const m of regMembers) {
+        if (isStudentRegistered(regClass, m.id)) {
+          return ww1Toast(m.name + ' כבר משובץ/ת בכיתה זו','err');
+        }
       }
     }
     showRegStep(3);
@@ -1367,8 +1431,8 @@ function filterTaskCards() {
 function selectTaskAndRegister(n) {
   selectTask(n);
   regStep = 1; regMembers = [];
-  document.getElementById('regModalTitle').textContent = 'שיבוץ קבוצה – ' + regClass;
-  document.getElementById('regModalSub').textContent = 'בחרו מטלה ואז 2-3 תלמידים';
+  document.getElementById('regModalTitle').textContent = (isTeacherMode ? '👩‍🏫 שיבוץ מורה – ' : 'שיבוץ קבוצה – ') + regClass;
+  document.getElementById('regModalSub').textContent = isTeacherMode ? 'מורה: ניתן לשבץ ללא הגבלה' : 'בחרו מטלה ואז 2-3 תלמידים';
   showRegStep(2);
   buildStudentList();
   document.getElementById('regOverlay').classList.add('open');
@@ -1472,9 +1536,12 @@ async function doRegister() {
 // ── TEACHER PANEL ─────────────────────────────────────────────────────────────
 let teacherActiveClass = null;
 
+let isTeacherMode = false;
+
 function openTeacher() {
   const pw = prompt('סיסמת מורה:');
   if (pw !== WW1_TEACHER_PASS) return alert('סיסמה שגויה');
+  isTeacherMode = true;
   const choice = confirm('לכניסה ללוח שיבוצים לחץ אישור.\nלמצב עריכת תוכן הנחיות לחץ ביטול.');
   if (choice) {
     teacherActiveClass = Object.keys(STUDENTS)[0];
@@ -1484,7 +1551,6 @@ function openTeacher() {
     buildCustomTaskInit();
     buildPendingCustomTasks();
     document.getElementById('teacherOverlay').classList.add('open');
-    // reset to first tab
     switchTPanel(document.querySelector('.t-panel-tab'), 'tp-regs');
   } else {
     enterEditMode();
