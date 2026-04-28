@@ -931,6 +931,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Set default active class
   regClass = "ט' 2";
+  // Render cards immediately (Firebase data may already be loaded)
+  renderCards();
 });
 
 function render() { /* replaced by card system */ }
@@ -1209,8 +1211,12 @@ function ww1Toast(msg, type='') {
 function startWw1Listener() {
   ww1Ref.on('value', snap => {
     ww1Registrations = snap.val() || {};
-    // Refresh card grid
-    renderCards();
+    // Refresh card grid – use setTimeout to ensure DOM is ready
+    if (document.getElementById('ww1-grid')) {
+      renderCards();
+    } else {
+      setTimeout(renderCards, 100);
+    }
     // Refresh task cards if reg modal open
     if (document.getElementById('regOverlay').classList.contains('open') && regStep === 1) {
       buildTaskCards();
@@ -1445,13 +1451,18 @@ async function doRegister() {
     timestamp: new Date().toLocaleString('he-IL')
   };
   await ww1db.ref(`ww1_registrations/${regClass}/${regTask.n}`).set(reg);
+  
+  // ── Update local cache IMMEDIATELY (don't wait for Firebase listener) ──
+  if (!ww1Registrations[regClass]) ww1Registrations[regClass] = {};
+  ww1Registrations[regClass][String(regTask.n)] = reg;
+  
   document.getElementById('successInfo').innerHTML =
     `<strong>כיתה:</strong> ${regClass}<br>
      <strong>מטלה:</strong> ${regTask.n}. ${regTask.t}<br>
      <strong>קבוצה:</strong> ${regMembers.map(m=>m.name).join(', ')}`;
   showRegStep(4);
   ww1Toast('השיבוץ הושלם!','ok');
-  // Force immediate UI update (Firebase listener may have slight delay)
+  // Now render with updated local data
   renderCards();
   updateWw1Stats();
 }
