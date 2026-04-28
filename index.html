@@ -473,6 +473,106 @@ a{color:inherit;text-decoration:none}
 .approve-btn{padding:6px 14px;background:#059669;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
 .reject-btn{padding:6px 14px;background:#DC2626;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
 
+
+/* ══ WW1 CARD GRID SYSTEM ══ */
+.ww1-page { background: #F4F7FB; min-height: calc(100vh - 120px); }
+
+.ww1-tabs { background: #fff; border-bottom: 2px solid #E0E8F0; padding: 0 2rem; }
+.ww1-tabs-inner { max-width: 1100px; margin: 0 auto; display: flex; gap: 2px; }
+.ww1-tab { padding: 13px 20px; font-family: inherit; font-size: 13px; font-weight: 600;
+  color: #888; background: none; border: none; border-bottom: 3px solid transparent;
+  margin-bottom: -2px; cursor: pointer; display: flex; align-items: center; gap: 7px;
+  transition: all .2s; white-space: nowrap; }
+.ww1-tab:hover { color: #1F4E79; }
+.ww1-tab.active { color: #1F4E79; border-bottom-color: #1F4E79; }
+.ww1-count { background: #E6F1FB; border: 1px solid #C5DAEA; border-radius: 10px;
+  padding: 1px 8px; font-size: 11px; color: #1F4E79; font-weight: 700; }
+.ww1-tab.active .ww1-count { background: #1F4E79; color: #fff; border-color: #1F4E79; }
+
+.ww1-panel { display: none; padding: 1.5rem 2rem; max-width: 1100px; margin: 0 auto; }
+.ww1-panel.active { display: block; }
+
+.ww1-stats { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.ww1-stat { background: #fff; border: 1px solid #E0E8F0; border-radius: 10px;
+  padding: 10px 18px; display: flex; align-items: center; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+.ww1-stat-val { font-size: 22px; font-weight: 800; color: #1F4E79; }
+.ww1-stat-lbl { font-size: 11px; color: #888; line-height: 1.3; }
+
+.ww1-search-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+.ww1-search-wrap { display: flex; align-items: center; gap: 8px; background: #fff;
+  border: 1.5px solid #D0DDE8; border-radius: 10px; padding: 8px 14px; transition: border .15s; }
+.ww1-search-wrap:focus-within { border-color: #2E75B6; }
+.ww1-search-wrap input { background: none; border: none; outline: none; font-family: inherit;
+  font-size: 13px; color: #1a1a2e; width: 200px; direction: rtl; }
+.ww1-search-wrap input::placeholder { color: #aaa; }
+
+.ww1-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+
+/* Task Card */
+.ww1-card { background: #fff; border: 1.5px solid #E0E8F0; border-radius: 13px;
+  padding: 16px; cursor: pointer; transition: all .18s; position: relative; overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.ww1-card::before { content: ''; position: absolute; top: 0; right: 0; width: 4px;
+  height: 100%; background: #2E75B6; opacity: 0; transition: opacity .18s; }
+.ww1-card:hover { border-color: #2E75B6; transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(31,78,121,.12); }
+.ww1-card:hover::before { opacity: 1; }
+.ww1-card.taken { opacity: .5; cursor: default; background: #F5F7FA; }
+.ww1-card.taken:hover { transform: none; box-shadow: 0 1px 4px rgba(0,0,0,.06); border-color: #E0E8F0; }
+.ww1-card.taken::before { display: none; }
+.ww1-card.mine { border-color: #059669; border-width: 2px; }
+.ww1-card.mine::before { background: #059669; opacity: 1; }
+.ww1-taken-badge { position: absolute; top: 10px; left: 10px; background: #DC2626;
+  color: #fff; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+.ww1-mine-badge { position: absolute; top: 10px; left: 10px; background: #059669;
+  color: #fff; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+.ww1-card-num { display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; background: #E6F1FB; border-radius: 8px; font-size: 12px;
+  font-weight: 700; color: #1F4E79; margin-bottom: 9px; }
+.ww1-card-title { font-size: 13.5px; font-weight: 700; color: #1a1a2e; margin-bottom: 5px; line-height: 1.4; }
+.ww1-card-sub { font-size: 11.5px; color: #666; line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ww1-card-footer { display: flex; align-items: center; justify-content: space-between;
+  margin-top: 11px; padding-top: 11px; border-top: 1px solid #EEF2F8; }
+.ww1-card-action { font-size: 10.5px; color: #2E75B6; font-weight: 600; }
+.ww1-card.taken .ww1-card-action { color: #DC2626; }
+.ww1-card.mine .ww1-card-action { color: #059669; }
+
+/* Groups panel */
+.ww1-groups-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.ww1-group-card { background: #fff; border: 1.5px solid #E0E8F0; border-radius: 12px;
+  padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.ww1-group-card.mine { border-color: #059669; border-width: 2px; }
+.ww1-group-label { font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase;
+  letter-spacing: .05em; margin-bottom: 5px; }
+.ww1-group-task { font-size: 13.5px; font-weight: 700; color: #1a1a2e; margin-bottom: 10px; line-height: 1.4; }
+.ww1-group-members { display: flex; flex-direction: column; gap: 5px; }
+.ww1-group-member { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #444; }
+.ww1-group-av { width: 24px; height: 24px; border-radius: 7px; background: #E6F1FB;
+  display: flex; align-items: center; justify-content: center; font-size: 10px;
+  font-weight: 700; color: #1F4E79; flex-shrink: 0; }
+.ww1-group-date { margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF2F8;
+  font-size: 10px; color: #aaa; }
+.ww1-empty { grid-column: 1/-1; text-align: center; padding: 50px 20px; color: #aaa; }
+.ww1-empty-icon { font-size: 36px; margin-bottom: 10px; }
+
+/* Task Detail Modal */
+.task-detail-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5);
+  z-index: 2000; align-items: center; justify-content: center; padding: 16px; direction: rtl; }
+.task-detail-overlay.open { display: flex; }
+.task-detail-modal { background: #fff; border-radius: 16px; width: min(700px,96vw);
+  max-height: 90vh; overflow-y: auto; box-shadow: 0 12px 50px rgba(0,0,0,.25); }
+.task-detail-head { background: linear-gradient(135deg,#1F4E79,#2E75B6);
+  padding: 1.4rem 1.75rem; border-radius: 16px 16px 0 0; }
+.task-detail-body { padding: 1.5rem 1.75rem; }
+
+@media(max-width:700px){
+  .ww1-tabs { padding: 0 1rem; }
+  .ww1-panel { padding: 1rem; }
+  .ww1-grid { grid-template-columns: 1fr; }
+  .ww1-search-wrap input { width: 130px; }
+}
+
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
@@ -497,7 +597,7 @@ a{color:inherit;text-decoration:none}
   <div class="inst-grid">
     <div class="inst-item">
       <div class="inst-icon">👥</div>
-      <div data-editable="inst-groups" data-label="כלל קבוצות">קבוצות של 3 תלמידים. מי שבחר מטלה ראשון – האחרים לא יכולים לגשת אליה.</div>
+      <div data-editable="inst-groups" data-label="כלל קבוצות">קבוצות של 2-3 תלמידים. מי שבחר מטלה ראשון – האחרים לא יכולים לגשת אליה.</div>
     </div>
     <div class="inst-item">
       <div class="inst-icon">📅</div>
@@ -518,9 +618,41 @@ a{color:inherit;text-decoration:none}
   </div>
 </div>
 
-<div class="layout">
-  <div class="sidebar" id="sidebar"></div>
-  <div class="main" id="main"></div>
+<div class="ww1-page">
+
+  <!-- TABS -->
+  <div class="ww1-tabs">
+    <div class="ww1-tabs-inner">
+      <button class="ww1-tab active" data-tab="topics">🗂 מטלות חקר <span class="ww1-count" id="ww1-av-count">23</span></button>
+      <button class="ww1-tab" data-tab="groups">👥 שיבוצים <span class="ww1-count" id="ww1-gr-count">0</span></button>
+    </div>
+  </div>
+
+  <!-- PANEL: Topics -->
+  <div class="ww1-panel active" id="ww1-panel-topics">
+    <div class="ww1-stats" id="ww1-stats"></div>
+    <div class="ww1-search-row">
+      <div class="ww1-search-wrap">
+        <span>🔍</span>
+        <input id="ww1-search" placeholder="חפשו מטלה..." oninput="filterCards()">
+      </div>
+    </div>
+    <div class="ww1-grid" id="ww1-grid"></div>
+  </div>
+
+  <!-- PANEL: Groups -->
+  <div class="ww1-panel" id="ww1-panel-groups">
+    <div class="ww1-groups-list" id="ww1-groups-list"></div>
+  </div>
+
+</div>
+
+<!-- Task detail modal -->
+<div class="task-detail-overlay" id="taskDetailOverlay">
+  <div class="task-detail-modal">
+    <div class="task-detail-head" id="taskDetailHead"></div>
+    <div class="task-detail-body" id="taskDetailBody"></div>
+  </div>
 </div>
 
 <script>
@@ -583,73 +715,214 @@ const PRES=["זמן: 8–10 דקות (כולל 2 דקות לשאלות ותשו�
 
 let cur=0;
 
-function buildSidebar(){
-  const sb=document.getElementById('sidebar');
-  sb.innerHTML='<div class="sidebar-head"><div class="sidebar-head-txt">23 מטלות חקר</div></div>';
-  A.forEach((a,i)=>{
-    const b=document.createElement('button');
-    b.className='tab-btn'+(i===cur?' active':'');
-    b.innerHTML=`<span class="tab-emoji">${a.e}</span><span class="tab-label">${a.t}</span><span class="tab-num">${a.n}</span>`;
-    b.onclick=()=>{cur=i;buildSidebar();render();
-// Rebind editable elements after render if in edit mode
+// ── Rebind editables helper ──────────────────────────────────────────────────
 function rebindEditables() {
   if (!_editMode) return;
   document.querySelectorAll('[data-editable]').forEach(el => {
     el.removeEventListener('click', onEditableClick);
     el.addEventListener('click', onEditableClick);
   });
-}b.scrollIntoView({block:'nearest'});window.scrollTo(0,0);};
-    sb.appendChild(b);
+}
+
+// ── Card grid functions ───────────────────────────────────────────────────────
+function buildSidebar() { /* replaced by card grid */ }
+
+function filterCards() {
+  const q = document.getElementById('ww1-search')?.value || '';
+  renderCards(q);
+}
+
+function renderCards(q='') {
+  const grid = document.getElementById('ww1-grid');
+  if (!grid) return;
+  const list = A.filter(a => !q || a.t.includes(q) || String(a.n).includes(q));
+  grid.innerHTML = list.map(a => {
+    const taken = isTaskTaken(regClass || '_none_', a.n) || isTaskTakenAnyClass(a.n);
+    const takenByMyClass = regClass ? isTaskTaken(regClass, a.n) : false;
+    const isMine = isMineTask(a.n);
+    let cls = 'ww1-card' + (isMine ? ' mine' : takenByMyClass ? ' taken' : '');
+    const badge = isMine
+      ? '<div class="ww1-mine-badge">★ הקבוצה שלי</div>'
+      : takenByMyClass ? '<div class="ww1-taken-badge">תפוסה בכיתה ✓</div>' : '';
+    const action = isMine ? '★ הקבוצה שלי' : takenByMyClass ? '⛔ תפוסה בכיתה' : '← לחץ לפרטים ושיבוץ';
+    return `<div class="${cls}" data-n="${a.n}">
+      ${badge}
+      <div class="ww1-card-num">${a.n}</div>
+      <div class="ww1-card-title">${a.e} ${a.t}</div>
+      <div class="ww1-card-sub">${a.sub}</div>
+      <div class="ww1-card-footer">
+        <span style="font-size:10px;color:#aaa">${a.focusIntro.slice(0,30)}...</span>
+        <span class="ww1-card-action">${action}</span>
+      </div>
+    </div>`;
+  }).join('');
+  grid.querySelectorAll('.ww1-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const n = parseInt(card.dataset.n);
+      if (!card.classList.contains('taken')) openTaskDetail(n);
+    });
   });
+  updateWw1Stats();
 }
 
-function render(){
-  const a=A[cur];
-  const introHtml=a.intro.map((p,i)=>`<p class="intro-para" data-editable="task_${a.n}_intro_${i}" data-label="מבוא ${i+1} – מטלה ${a.n}">${cc('task_'+a.n+'_intro_'+i,p)}</p>`).join('');
-  const focusHtml=`<table class="focus-table"><thead><tr>${a.focusCols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${a.focusRows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
-  const sparkHtml=a.spark?`<div class="spark-box"><div class="spark-lbl">${a.spark.title}</div><div class="spark-txt">${a.spark.txt}</div></div>`:'';
-  const tasksHtml=a.tasks.map((t,i)=>`<div class="task-row"><div class="task-circle">${i+1}</div><div class="task-body"><div class="task-q" data-editable="task_${a.n}_tq_${i}" data-label="שאלה ${i+1} – מטלה ${a.n}">${cc('task_'+a.n+'_tq_'+i,t.q)}</div><div class="task-detail" data-editable="task_${a.n}_td_${i}" data-label="פירוט ${i+1} – מטלה ${a.n}">${cc('task_'+a.n+'_td_'+i,t.d)}</div>${t.ch?`<div class="challenge-strip"><div class="ch-lbl">💡 אתגר חשיבה</div><div class="ch-txt" data-editable="task_${a.n}_ch_${i}" data-label="אתגר ${i+1} – מטלה ${a.n}">${cc('task_'+a.n+'_ch_'+i,t.ch)}</div></div>`:''}</div></div>`).join('');
-  const presAll=[...PRES,...(a.presExtra||[])];
-  const sourcesHtml=a.sources.map((s,i)=>`<div class="src-item"><span class="src-dot">·</span><span data-editable="task_${a.n}_src_${i}" data-label="מקור ${i+1} – מטלה ${a.n}">${cc('task_'+a.n+'_src_'+i,s)}</span></div>`).join('');
-  const rubricHtml=RL.map((l,i)=>`<tr><td>${l}</td><td class="pct-cell">${RW[i]}</td><td>${a.rubric[i]}</td></tr>`).join('');
+function isTaskTakenAnyClass(taskNum) {
+  for (const cls of Object.keys(ww1Registrations)) {
+    if ((ww1Registrations[cls] || {})[taskNum]) return true;
+  }
+  return false;
+}
 
-  document.getElementById('main').innerHTML=`
-  <div class="doc-card">
-    <div class="doc-header">
-      <div><div class="doc-num">מטלת חקר מס' ${a.n} מתוך 23</div><div class="doc-title">${a.e}  ${a.t}</div><div class="doc-sub">${a.sub}</div></div>
-      <a class="dl-btn" href="${a.f}" download title="הורד קובץ Word">⬇ הורד Word</a>
-    </div>
-    <div class="doc-body">
-      <div class="sec-label">מבוא ורציונל פדגוגי</div>
+function isMineTask(taskNum) {
+  // check if any class has this task with one of my recent registrations
+  // We track via ww1Registrations loaded from Firebase
+  return false; // individual tracking not needed here – shown in teacher panel
+}
+
+function updateWw1Stats() {
+  const regs = ww1Registrations;
+  let taken = 0, groups = 0;
+  for (const cls of Object.keys(regs)) {
+    const clsRegs = regs[cls] || {};
+    const keys = Object.keys(clsRegs);
+    groups += keys.length;
+    if (keys.length > 0) taken++;
+  }
+  // Count unique tasks taken across all classes
+  const takenTasks = new Set();
+  for (const cls of Object.keys(regs)) {
+    for (const tn of Object.keys(regs[cls] || {})) takenTasks.add(tn);
+  }
+  const stats = document.getElementById('ww1-stats');
+  if (stats) stats.innerHTML = `
+    <div class="ww1-stat"><div class="ww1-stat-val">${23 - takenTasks.size}</div><div class="ww1-stat-lbl">מטלות פנויות</div></div>
+    <div class="ww1-stat"><div class="ww1-stat-val" style="color:#DC2626">${takenTasks.size}</div><div class="ww1-stat-lbl">מטלות תפוסות</div></div>
+    <div class="ww1-stat"><div class="ww1-stat-val" style="color:#059669">${groups}</div><div class="ww1-stat-lbl">קבוצות נרשמו</div></div>
+  `;
+  const avC = document.getElementById('ww1-av-count');
+  if (avC) avC.textContent = 23 - takenTasks.size;
+  const grC = document.getElementById('ww1-gr-count');
+  if (grC) grC.textContent = groups;
+}
+
+function renderGroups() {
+  const el = document.getElementById('ww1-groups-list');
+  if (!el) return;
+  const regs = ww1Registrations;
+  let html = '';
+  for (const cls of Object.keys(regs)) {
+    for (const [tn, reg] of Object.entries(regs[cls] || {})) {
+      const task = A.find(a => a.n === parseInt(tn));
+      html += `<div class="ww1-group-card">
+        <div class="ww1-group-label">כיתה ${cls} · מטלה ${tn}</div>
+        <div class="ww1-group-task">${task ? task.e + ' ' + task.t : reg.taskName || 'מטלה ' + tn}</div>
+        <div class="ww1-group-members">${(reg.members||[]).map(m =>
+          `<div class="ww1-group-member"><div class="ww1-group-av">${m.name.charAt(0)}</div>${m.name}</div>`
+        ).join('')}</div>
+        <div class="ww1-group-date">${reg.timestamp || ''}</div>
+      </div>`;
+    }
+  }
+  el.innerHTML = html || '<div class="ww1-empty"><div class="ww1-empty-icon">👥</div><p>אין שיבוצים עדיין</p></div>';
+}
+
+// Tab switching
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.ww1-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.ww1-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.ww1-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      const id = 'ww1-panel-' + tab.dataset.tab;
+      document.getElementById(id)?.classList.add('active');
+      if (tab.dataset.tab === 'groups') renderGroups();
+    });
+  });
+});
+
+function render() { /* replaced by card system */ }
+
+function openTaskDetail(n) {
+  const a = A.find(x => x.n === n);
+  if (!a) return;
+  const head = document.getElementById('taskDetailHead');
+  const body = document.getElementById('taskDetailBody');
+  const takenByMyClass = regClass ? isTaskTaken(regClass, a.n) : false;
+  const reg = regClass ? getClassTaskReg(regClass, a.n) : null;
+
+  head.innerHTML = `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem">
+      <div>
+        <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:4px;font-weight:600;letter-spacing:.05em;text-transform:uppercase">מטלת חקר ${a.n} מתוך 23</div>
+        <div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:3px">${a.e} ${a.t}</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.75);font-style:italic">${a.sub}</div>
+      </div>
+      <button onclick="document.getElementById('taskDetailOverlay').classList.remove('open')"
+        style="background:rgba(255,255,255,.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;flex-shrink:0">✕</button>
+    </div>`;
+
+  const introHtml = a.intro.map((p,i) => `<p style="font-size:13.5px;color:#3a3a4e;line-height:1.8;margin-bottom:.6rem" data-editable="task_${a.n}_intro_${i}" data-label="מבוא ${i+1} – מטלה ${a.n}">${cc('task_'+a.n+'_intro_'+i,p)}</p>`).join('');
+  const tasksHtml = a.tasks.map((t,i) => `
+    <div style="background:#F7FAFD;border-radius:9px;padding:12px 14px;display:flex;gap:12px;align-items:flex-start;border:1px solid #EEF2F8;margin-bottom:8px">
+      <div style="width:26px;height:26px;border-radius:50%;background:#1F4E79;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i+1}</div>
+      <div>
+        <div style="font-size:13.5px;font-weight:600;color:#1a1a2e;margin-bottom:4px" data-editable="task_${a.n}_tq_${i}" data-label="שאלה ${i+1}">${cc('task_'+a.n+'_tq_'+i,t.q)}</div>
+        <div style="font-size:12.5px;color:#555;line-height:1.65" data-editable="task_${a.n}_td_${i}" data-label="פירוט ${i+1}">${cc('task_'+a.n+'_td_'+i,t.d)}</div>
+        ${t.ch ? `<div style="margin-top:8px;padding:9px 12px;background:#FFF8EC;border-right:3px solid #F0A500;border-radius:0 7px 7px 0"><div style="font-size:10.5px;font-weight:700;color:#7A4F00;margin-bottom:3px">💡 אתגר חשיבה</div><div style="font-size:12px;color:#8B5E00" data-editable="task_${a.n}_ch_${i}" data-label="אתגר ${i+1}">${cc('task_'+a.n+'_ch_'+i,t.ch)}</div></div>` : ''}
+      </div>
+    </div>`).join('');
+  const sourcesHtml = a.sources.map((s,i) => `<div style="font-size:13px;color:#444;padding:6px 12px;background:#F7FAFD;border-radius:6px;display:flex;gap:8px;border:1px solid #EEF2F8;margin-bottom:4px"><span style="color:#2E75B6">·</span><span data-editable="task_${a.n}_src_${i}" data-label="מקור ${i+1}">${cc('task_'+a.n+'_src_'+i,s)}</span></div>`).join('');
+
+  // Registration section
+  let regSection = '';
+  if (!regClass) {
+    regSection = `<div style="background:#FFF3CD;border:1px solid #F59E0B;border-radius:10px;padding:14px;text-align:center">
+      <div style="font-size:13px;font-weight:600;color:#92400E">לחץ על ✏️ שיבוץ קבוצה כדי לבחור כיתה ולהירשם</div>
+    </div>`;
+  } else if (takenByMyClass) {
+    regSection = `<div style="background:#FEE2E2;border:1.5px solid #DC2626;border-radius:10px;padding:16px;text-align:center">
+      <div style="font-size:22px;margin-bottom:6px">⛔</div>
+      <div style="font-size:14px;font-weight:700;color:#DC2626;margin-bottom:4px">מטלה זו תפוסה בכיתה ${regClass}</div>
+      <div style="font-size:12px;color:#666">${reg ? reg.members.map(m=>m.name).join(', ') : ''}</div>
+    </div>`;
+  } else {
+    regSection = `<div style="background:#E6F1FB;border:1.5px solid #2E75B6;border-radius:10px;padding:16px;text-align:center">
+      <div style="font-size:13px;font-weight:600;color:#1F4E79;margin-bottom:10px">כיתה ${regClass} – המטלה פנויה!</div>
+      <button onclick="document.getElementById('taskDetailOverlay').classList.remove('open');selectTask(${a.n});showRegStep(2);document.getElementById('regOverlay').classList.add('open');"
+        style="padding:10px 24px;background:#1F4E79;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">
+        ✓ בחר מטלה זו לקבוצתי
+      </button>
+    </div>`;
+  }
+
+  body.innerHTML = `
+    <div style="margin-bottom:1.25rem">
+      <div style="font-size:10.5px;font-weight:700;color:#2E75B6;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.75rem">מבוא</div>
       ${introHtml}
-      <hr class="section-sep">
-      <div class="sec-label">מוקדי החקר</div>
-      <p class="intro-para" style="margin-bottom:.6rem">${a.focusIntro}</p>
-      ${focusHtml}
-      ${a.spark?`<hr class="section-sep">${sparkHtml}`:''}
-      <hr class="section-sep">
-      <div class="sec-label">משימות החקר והניתוח</div>
-      <div class="tasks-list">${tasksHtml}</div>
-      <hr class="section-sep">
-      <div class="sec-label">משימת ניתוח חזותי</div>
-      <div class="visual-box"><div class="visual-lbl">🗺️ משימה</div><div class="visual-txt">${a.visual}</div></div>
-      <hr class="section-sep">
-      <div class="sec-label">שאלת העמדה הביקורתית</div>
-      <div class="critical-box"><div class="crit-lbl">🧠 שאלה לדיון</div><div class="crit-q">${a.cq}</div><div class="crit-desc">${a.cd}</div><div>${a.creqs.map(r=>`<div class="crit-req">${r}</div>`).join('')}</div></div>
-      <hr class="section-sep">
-      <div class="sec-label">הנחיות לביצוע ופרזנטציה</div>
-      ${presAll.map(p=>`<div class="pres-item">${p}</div>`).join('')}
-      <hr class="section-sep">
-      <div class="sec-label">מקורות מידע מומלצים</div>
-      <div style="display:flex;flex-direction:column;gap:5px">${sourcesHtml}</div>
-      <hr class="section-sep">
-      <div class="sec-label">מחוון הערכה (Rubric)</div>
-      <table class="rubric-table"><thead><tr><th>קריטריון</th><th style="text-align:center">משקל</th><th>ביצוע מצטיין (90–100)</th></tr></thead><tbody>${rubricHtml}</tbody></table>
-      <div class="footer-line">היסטוריה היא מעבדה להבנת המין האנושי. בהצלחה לכולם! 🌟</div>
     </div>
-  </div>`;
+    <hr style="border:none;border-top:1px solid #EEF2F8;margin:1rem 0">
+    <div style="margin-bottom:1.25rem">
+      <div style="font-size:10.5px;font-weight:700;color:#2E75B6;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.75rem">משימות החקר</div>
+      ${tasksHtml}
+    </div>
+    <hr style="border:none;border-top:1px solid #EEF2F8;margin:1rem 0">
+    <div style="margin-bottom:1.25rem">
+      <div style="font-size:10.5px;font-weight:700;color:#2E75B6;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.75rem">מקורות מומלצים</div>
+      ${sourcesHtml}
+    </div>
+    <hr style="border:none;border-top:1px solid #EEF2F8;margin:1rem 0">
+    ${regSection}
+  `;
+  document.getElementById('taskDetailOverlay').classList.add('open');
+  if (_editMode) rebindEditables();
 }
 
+// Close on overlay click
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('taskDetailOverlay')?.addEventListener('click', e => {
+    if (e.target === document.getElementById('taskDetailOverlay'))
+      document.getElementById('taskDetailOverlay').classList.remove('open');
+  });
+});
 buildSidebar();render();
 
 
@@ -700,7 +973,7 @@ const STUDENTS = {"ט' 2":[{"name":"אהרונוב אופיר","id":"220046833"}
 
       <!-- Step 2: Pick students -->
       <div class="reg-step-panel" id="rsp2">
-        <p style="font-size:12px;color:#888;margin-bottom:.5rem">בחרו בדיוק 3 תלמידים:</p>
+        <p style="font-size:12px;color:#888;margin-bottom:.5rem">בחרו 2 עד 3 תלמידים:</p>
         <div class="member-tags" id="memberTags"><span style="color:#ccc;font-size:12px">אף תלמיד טרם נבחר</span></div>
         <input class="search-input" id="studentSearchInput" placeholder="חפשו שם תלמיד..." oninput="filterStudentRows()">
         <div class="student-scroll" id="studentScroll"></div>
@@ -842,7 +1115,9 @@ function ww1Toast(msg, type='') {
 function startWw1Listener() {
   ww1Ref.on('value', snap => {
     ww1Registrations = snap.val() || {};
-    // Refresh task cards if modal open
+    // Refresh card grid
+    renderCards();
+    // Refresh task cards if reg modal open
     if (document.getElementById('regOverlay').classList.contains('open') && regStep === 1) {
       buildTaskCards();
     }
@@ -930,7 +1205,7 @@ async function regNext() {
     if (!regTask) return ww1Toast('בחרו מטלה','err');
     showRegStep(2);
   } else if (regStep===2) {
-    if (regMembers.length!==3) return ww1Toast('יש לבחור בדיוק 3 תלמידים','err');
+    if (regMembers.length < 2 || regMembers.length > 3) return ww1Toast('יש לבחור 2 עד 3 תלמידים','err');
     // Check none already registered
     for (const m of regMembers) {
       if (isStudentRegistered(regClass, m.id)) {
@@ -1009,10 +1284,10 @@ function filterStudentRows() {
 function toggleStudent(id, name) {
   const idx = regMembers.findIndex(m => m.id===id);
   if (idx >= 0) { regMembers.splice(idx,1); }
-  else { if (regMembers.length>=3) return ww1Toast('ניתן לבחור עד 3 תלמידים','err'); regMembers.push({id,name}); }
+  else { if (regMembers.length>=3) return ww1Toast('ניתן לבחור עד 3 תלמידים בלבד','err'); regMembers.push({id,name}); }
   renderMemberTags();
   filterStudentRows();
-  document.getElementById('regBtnNext').disabled = regMembers.length!==3;
+  document.getElementById('regBtnNext').disabled = regMembers.length < 2;
 }
 
 function renderMemberTags() {
