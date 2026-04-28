@@ -1238,7 +1238,22 @@ function ww1Toast(msg, type='') {
 // ── Firebase listener ─────────────────────────────────────────────────────────
 function startWw1Listener() {
   ww1Ref.on('value', snap => {
-    ww1Registrations = snap.val() || {};
+    const raw = snap.val() || {};
+    // Firebase converts numeric-keyed objects to arrays - convert back
+    const fixed = {};
+    for (const [cls, clsData] of Object.entries(raw)) {
+      if (Array.isArray(clsData)) {
+        // Convert array back to object, skipping null entries
+        fixed[cls] = {};
+        clsData.forEach((v, i) => { if (v !== null) fixed[cls][String(i)] = v; });
+      } else if (clsData && typeof clsData === 'object') {
+        fixed[cls] = {};
+        for (const [k, v] of Object.entries(clsData)) {
+          fixed[cls][String(k)] = v;
+        }
+      }
+    }
+    ww1Registrations = fixed;
     // Show debug info on page
     const dbg = document.getElementById('dbg-info');
     if (dbg) {
