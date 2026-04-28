@@ -1439,9 +1439,15 @@ async function doRegister() {
   // Double-check task not taken
   const snap = await ww1db.ref(`ww1_registrations/${regClass}/${regTask.n}`).get();
   if (snap.exists()) {
+    // Update local cache with server data so UI reflects reality
+    if (!ww1Registrations[regClass]) ww1Registrations[regClass] = {};
+    ww1Registrations[regClass][String(regTask.n)] = snap.val();
+    renderCards();
+    updateWw1Stats();
     document.getElementById('regBtnNext').disabled = false;
     document.getElementById('regBtnNext').textContent = '✅ אשר שיבוץ';
-    return ww1Toast('המטלה נתפסה זה עתה! בחרו אחרת.','err');
+    closeRegModal();
+    return ww1Toast('המטלה כבר תפוסה! הכרטיסייה עודכנה.','err');
   }
   const reg = {
     taskNum: regTask.n,
