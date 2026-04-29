@@ -1849,7 +1849,8 @@ function buildTeacherContent() {
           <div class="t-groups">
             <div class="t-group-row">
               <span>${reg.members.map(m=>m.name).join(', ')} · ${reg.timestamp}</span>
-              <div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+                <button class="t-edit-btn" data-cls="${cls}" data-tn="${tn}" style="background:rgba(37,99,235,.1);border:1px solid rgba(37,99,235,.3);color:#1F4E79;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">✏️ ערוך חברים</button>
                 ${!isCustom?`<button class="t-move-btn" data-cls="${cls}" data-tn="${tn}">↔ שנה מטלה</button>`:''}
                 <button class="t-del-btn" data-cls="${cls}" data-tn="${tn}">🗑</button>
               </div>
@@ -1860,6 +1861,13 @@ function buildTeacherContent() {
     }
   }
   el.innerHTML = html || '<div class="empty-note">אין שיבוצים</div>';
+  // Bind edit members
+  el.querySelectorAll('.t-edit-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      openEditMembers(btn.dataset.cls, btn.dataset.tn);
+    });
+  });
+
   // Bind delete
   el.querySelectorAll('.t-del-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
@@ -2194,6 +2202,95 @@ document.addEventListener('DOMContentLoaded', function() {
   renderCards();
 });
 
+
+// ── EDIT MEMBERS MODAL ────────────────────────────────────────────────────────
+let editCls = '', editTn = '';
+
+function openEditMembers(cls, tn) {
+  editCls = cls;
+  editTn = tn;
+  const reg = (ww1Registrations[clsToKey(cls)] || ww1Registrations[cls] || {})[tn];
+  if (!reg) return;
+  
+  const modal = document.getElementById('editMembersModal');
+  const title = document.getElementById('editMembersTitle');
+  const task = A.find(a => a.n === parseInt(tn));
+  title.textContent = (task ? task.e + ' ' + task.t : reg.taskName || 'מטלה ' + tn) + ' – ' + cls;
+  
+  renderEditMembersList(reg);
+  modal.classList.add('open');
+}
+
+function renderEditMembersList(reg) {
+  const members = reg ? (reg.members || []) : [];
+  const el = document.getElementById('editMembersList');
+  
+  // Current members
+  el.innerHTML = `
+    <div style="font-size:11px;font-weight:700;color:#888;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">חברי הקבוצה הנוכחיים</div>
+    ${members.map((m, i) => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:#F7FAFD;border-radius:8px;margin-bottom:6px;border:1px solid #EEF2F8">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:28px;height:28px;border-radius:8px;background:#E6F1FB;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#1F4E79">${m.name.charAt(0)}</div>
+          <span style="font-size:13px;font-weight:500">${m.name}</span>
+        </div>
+        <button onclick="removeMemberFromGroup(${i})" style="background:#FEE2E2;border:1px solid rgba(220,38,38,.2);color:#DC2626;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">✕ הסר</button>
+      </div>`).join('')}
+    ${members.length === 0 ? '<div style="color:#aaa;font-size:12px;text-align:center;padding:10px">אין חברים בקבוצה</div>' : ''}
+    
+    <div style="font-size:11px;font-weight:700;color:#888;margin:14px 0 8px;text-transform:uppercase;letter-spacing:.05em">הוסף תלמיד</div>
+    <div style="display:flex;gap:8px">
+      <select id="addMemberSelect" style="flex:1;background:#F7FAFD;border:1.5px solid #D0DDE8;border-radius:8px;padding:8px 10px;font-family:inherit;font-size:13px;direction:rtl;outline:none">
+        <option value="">— בחר תלמיד —</option>
+        ${(STUDENTS[editCls] || []).filter(s => !members.some(m => m.id === s.id)).map(s =>
+          `<option value="${s.id}" data-name="${s.name}">${s.name}</option>`
+        ).join('')}
+      </select>
+      <button onclick="addMemberToGroup()" style="padding:8px 16px;background:#1F4E79;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">+ הוסף</button>
+    </div>
+  `;
+}
+
+async function removeMemberFromGroup(idx) {
+  const reg = (ww1Registrations[clsToKey(editCls)] || ww1Registrations[editCls] || {})[editTn];
+  if (!reg) return;
+  const newMembers = [...(reg.members || [])];
+  newMembers.splice(idx, 1);
+  await ww1db.ref('ww1_registrations').child(clsToKey(editCls)).child(editTn).child('members').set(newMembers);
+  // Update local cache
+  if (ww1Registrations[clsToKey(editCls)] && ww1Registrations[clsToKey(editCls)][editTn]) {
+    ww1Registrations[clsToKey(editCls)][editTn].members = newMembers;
+  }
+  const updatedReg = {...reg, members: newMembers};
+  renderEditMembersList(updatedReg);
+  buildTeacherContent();
+  ww1Toast('✓ תלמיד הוסר', 'ok');
+}
+
+async function addMemberToGroup() {
+  const sel = document.getElementById('addMemberSelect');
+  const id = sel.value;
+  const name = sel.options[sel.selectedIndex]?.dataset?.name;
+  if (!id) return ww1Toast('בחר תלמיד', 'err');
+  
+  const reg = (ww1Registrations[clsToKey(editCls)] || ww1Registrations[editCls] || {})[editTn];
+  if (!reg) return;
+  const members = [...(reg.members || [])];
+  if (members.length >= 3) return ww1Toast('קבוצה יכולה להכיל עד 3 תלמידים', 'err');
+  if (members.some(m => m.id === id)) return ww1Toast('תלמיד כבר בקבוצה', 'err');
+  
+  members.push({id, name});
+  await ww1db.ref('ww1_registrations').child(clsToKey(editCls)).child(editTn).child('members').set(members);
+  // Update local cache
+  if (ww1Registrations[clsToKey(editCls)] && ww1Registrations[clsToKey(editCls)][editTn]) {
+    ww1Registrations[clsToKey(editCls)][editTn].members = members;
+  }
+  const updatedReg = {...reg, members};
+  renderEditMembersList(updatedReg);
+  buildTeacherContent();
+  ww1Toast('✓ ' + name + ' נוסף/ה לקבוצה', 'ok');
+}
+
 </script>
 
 <!-- Custom Student Task Modal -->
@@ -2221,6 +2318,21 @@ document.addEventListener('DOMContentLoaded', function() {
         ✦ שלח הצעה לאישור מורה
       </button>
     </div>
+  </div>
+</div>
+
+
+<!-- Edit Members Modal -->
+<div class="reg-overlay" id="editMembersModal" style="z-index:3000" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="reg-modal" style="max-width:480px">
+    <div class="reg-modal-head">
+      <div>
+        <div class="reg-modal-title">✏️ עריכת חברי קבוצה</div>
+        <div class="reg-modal-sub" id="editMembersTitle"></div>
+      </div>
+      <button class="reg-modal-close" onclick="document.getElementById('editMembersModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="reg-modal-body" id="editMembersList"></div>
   </div>
 </div>
 
