@@ -2350,6 +2350,7 @@ async function removeMemberFromGroup(idx) {
   const updatedReg = {...reg, members: newMembers};
   renderEditMembersList(updatedReg);
   buildTeacherContent();
+  renderGroups();
   ww1Toast('✓ תלמיד הוסר', 'ok');
 }
 
@@ -2374,6 +2375,7 @@ async function addMemberToGroup() {
   const updatedReg = {...reg, members};
   renderEditMembersList(updatedReg);
   buildTeacherContent();
+  renderGroups();
   ww1Toast('✓ ' + name + ' נוסף/ה לקבוצה', 'ok');
 }
 
