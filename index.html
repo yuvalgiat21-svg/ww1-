@@ -1434,7 +1434,7 @@ async function regNext() {
     }
     showRegStep(2);
   } else if (regStep===2) {
-    if (regMembers.length < 2 || regMembers.length > 3) return ww1Toast('יש לבחור 2 עד 3 תלמידים','err');
+    if (regMembers.length < 2 || regMembers.length > (isTeacherMode?4:3)) return ww1Toast(isTeacherMode?'יש לבחור 2 עד 4 תלמידים':'יש לבחור 2 עד 3 תלמידים','err');
     // Check none already registered (skip for teacher)
     if (!isTeacherMode) {
       for (const m of regMembers) {
@@ -1525,10 +1525,10 @@ function filterStudentRows() {
 function toggleStudent(id, name) {
   const idx = regMembers.findIndex(m => m.id===id);
   if (idx >= 0) { regMembers.splice(idx,1); }
-  else { if (regMembers.length>=3) return ww1Toast('ניתן לבחור עד 3 תלמידים בלבד','err'); regMembers.push({id,name}); }
+  else { if (regMembers.length>=(isTeacherMode?4:3)) return ww1Toast(isTeacherMode?'ניתן לבחור עד 4 תלמידים':'ניתן לבחור עד 3 תלמידים','err'); regMembers.push({id,name}); }
   renderMemberTags();
   filterStudentRows();
-  document.getElementById('regBtnNext').disabled = regMembers.length < 2;
+  document.getElementById('regBtnNext').disabled = regMembers.length < 2 || regMembers.length > (isTeacherMode?4:3);
 }
 
 function renderMemberTags() {
@@ -2276,7 +2276,7 @@ async function addMemberToGroup() {
   const reg = (ww1Registrations[clsToKey(editCls)] || ww1Registrations[editCls] || {})[editTn];
   if (!reg) return;
   const members = [...(reg.members || [])];
-  if (members.length >= 3) return ww1Toast('קבוצה יכולה להכיל עד 3 תלמידים', 'err');
+  if (members.length >= 4) return ww1Toast('קבוצה יכולה להכיל עד 4 תלמידים בהרשאת מורה', 'err');
   if (members.some(m => m.id === id)) return ww1Toast('תלמיד כבר בקבוצה', 'err');
   
   members.push({id, name});
