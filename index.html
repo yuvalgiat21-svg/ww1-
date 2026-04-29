@@ -1200,6 +1200,7 @@ const STUDENTS = {"ט' 2":[{"name":"אהרונוב אופיר","id":"220046833"}
       <!-- Main tabs: Registrations | Manage Students | Custom Task -->
       <div class="t-panel-tabs">
         <button class="t-panel-tab active" onclick="switchTPanel(this,'tp-regs')">📋 שיבוצים</button>
+        <button class="t-panel-tab" onclick="switchTPanel(this,'tp-create');initCreateGroup()">➕ צור קבוצה</button>
         <button class="t-panel-tab" onclick="switchTPanel(this,'tp-students')">👥 ניהול תלמידים</button>
         <button class="t-panel-tab" onclick="switchTPanel(this,'tp-custom')">✦ מטלה חופשית</button>
       </div>
@@ -1247,6 +1248,42 @@ const STUDENTS = {"ט' 2":[{"name":"אהרונוב אופיר","id":"220046833"}
           <button onclick="teacherCreateGroup()" style="width:100%;padding:11px;background:linear-gradient(135deg,#1F4E79,#2E75B6);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">
             ✓ צור קבוצה
           </button>
+          <div id="tc-msg" style="margin-top:10px;font-size:12px;text-align:center;min-height:18px"></div>
+        </div>
+      </div>
+
+      <!-- TAB: Create Group -->
+      <div class="t-panel-section" id="tp-create">
+        <div style="max-width:480px;padding:4px 0">
+          <div style="font-size:13px;font-weight:700;color:#1F4E79;margin-bottom:16px">יצירת קבוצה חדשה</div>
+
+          <div style="margin-bottom:12px">
+            <label style="font-size:11px;font-weight:700;color:#888;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em">כיתה</label>
+            <select id="tc-cls" onchange="tcLoadStudents()" style="width:100%;background:#F7FAFD;border:1.5px solid #D0DDE8;border-radius:8px;padding:9px 12px;font-family:inherit;font-size:13px;direction:rtl;outline:none">
+              <option value="">— בחר כיתה —</option>
+              <option value="ט' 2">כיתה ט׳2</option>
+              <option value="ט' 6">כיתה ט׳6</option>
+              <option value="ט' 7">כיתה ט׳7</option>
+              <option value="ט' 8">כיתה ט׳8</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom:12px">
+            <label style="font-size:11px;font-weight:700;color:#888;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em">מטלה</label>
+            <select id="tc-task" style="width:100%;background:#F7FAFD;border:1.5px solid #D0DDE8;border-radius:8px;padding:9px 12px;font-family:inherit;font-size:13px;direction:rtl;outline:none">
+              <option value="">— בחר מטלה —</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom:14px">
+            <label style="font-size:11px;font-weight:700;color:#888;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em">תלמידים (2-4)</label>
+            <div id="tc-student-list" style="max-height:200px;overflow-y:auto;border:1.5px solid #D0DDE8;border-radius:8px;background:#fff">
+              <div style="padding:12px;color:#aaa;font-size:12px;text-align:center">בחר כיתה תחילה</div>
+            </div>
+            <div id="tc-tags" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;min-height:24px"></div>
+          </div>
+
+          <button onclick="doTeacherCreateGroup()" style="width:100%;padding:12px;background:linear-gradient(135deg,#1F4E79,#2E75B6);color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">✓ צור קבוצה</button>
           <div id="tc-msg" style="margin-top:10px;font-size:12px;text-align:center;min-height:18px"></div>
         </div>
       </div>
@@ -2435,6 +2472,105 @@ async function teacherCreateGroup() {
   }, 1500);
   
   ww1Toast('✓ קבוצה נוצרה', 'ok');
+}
+
+
+// ── TEACHER CREATE GROUP ──────────────────────────────────────────────────────
+var tcSel = [];
+
+function initCreateGroup() {
+  var sel = document.getElementById('tc-task');
+  if (sel && sel.options.length <= 1) {
+    A.forEach(function(a) {
+      var opt = document.createElement('option');
+      opt.value = a.n;
+      opt.textContent = a.n + '. ' + a.e + ' ' + a.t;
+      sel.appendChild(opt);
+    });
+  }
+  tcSel = [];
+  tcRenderTags();
+  document.getElementById('tc-cls').value = '';
+  document.getElementById('tc-task').value = '';
+  document.getElementById('tc-student-list').innerHTML = '<div style="padding:12px;color:#aaa;font-size:12px;text-align:center">בחר כיתה תחילה</div>';
+  document.getElementById('tc-msg').textContent = '';
+}
+
+function tcLoadStudents() {
+  var cls = document.getElementById('tc-cls').value;
+  tcSel = [];
+  tcRenderTags();
+  var listEl = document.getElementById('tc-student-list');
+  if (!cls) { listEl.innerHTML = '<div style="padding:12px;color:#aaa;font-size:12px;text-align:center">בחר כיתה תחילה</div>'; return; }
+  var students = STUDENTS[cls] || [];
+  listEl.innerHTML = students.map(function(s) {
+    return '<div class="tc-srow" data-id="' + s.id + '" data-name="' + s.name + '" style="padding:9px 12px;display:flex;align-items:center;gap:9px;border-bottom:1px solid #F0F4F8;cursor:pointer;font-size:13px">' +
+      '<div class="tc-chk" style="width:18px;height:18px;border-radius:4px;border:2px solid #C0D0E0;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff"></div>' +
+      '<span>' + s.name + '</span></div>';
+  }).join('');
+  listEl.querySelectorAll('.tc-srow').forEach(function(row) {
+    row.addEventListener('click', function() {
+      var id = row.dataset.id, name = row.dataset.name;
+      var idx = tcSel.findIndex(function(s) { return s.id === id; });
+      if (idx >= 0) { tcSel.splice(idx, 1); }
+      else {
+        if (tcSel.length >= 4) { ww1Toast('ניתן לבחור עד 4 תלמידים', 'err'); return; }
+        tcSel.push({id: id, name: name});
+      }
+      tcRefreshList();
+      tcRenderTags();
+    });
+  });
+}
+
+function tcRefreshList() {
+  document.querySelectorAll('.tc-srow').forEach(function(row) {
+    var sel = tcSel.some(function(s) { return s.id === row.dataset.id; });
+    var chk = row.querySelector('.tc-chk');
+    row.style.background = sel ? 'rgba(31,78,121,.07)' : '';
+    chk.style.background = sel ? '#1F4E79' : '';
+    chk.style.borderColor = sel ? '#1F4E79' : '#C0D0E0';
+    chk.textContent = sel ? '✓' : '';
+  });
+}
+
+function tcRenderTags() {
+  var el = document.getElementById('tc-tags');
+  if (!el) return;
+  el.innerHTML = tcSel.length === 0
+    ? '<span style="color:#ccc;font-size:12px">לא נבחרו תלמידים</span>'
+    : tcSel.map(function(s) { return '<div style="background:#E6F1FB;border:1px solid #C5DAEA;border-radius:20px;padding:3px 11px;font-size:12px;color:#1F4E79;font-weight:500">' + s.name + '</div>'; }).join('');
+}
+
+async function doTeacherCreateGroup() {
+  var cls = document.getElementById('tc-cls').value;
+  var taskNum = document.getElementById('tc-task').value;
+  var msgEl = document.getElementById('tc-msg');
+  if (!cls) { msgEl.textContent = '⚠️ בחר כיתה'; msgEl.style.color='#DC2626'; return; }
+  if (!taskNum) { msgEl.textContent = '⚠️ בחר מטלה'; msgEl.style.color='#DC2626'; return; }
+  if (tcSel.length < 2) { msgEl.textContent = '⚠️ בחר לפחות 2 תלמידים'; msgEl.style.color='#DC2626'; return; }
+  var task = A.find(function(a) { return a.n === parseInt(taskNum); });
+  var reg = {
+    taskNum: parseInt(taskNum),
+    taskName: task ? task.t : '',
+    classKey: cls,
+    members: tcSel,
+    timestamp: new Date().toLocaleString('he-IL'),
+    createdByTeacher: true
+  };
+  await ww1db.ref('ww1_registrations').child(clsToKey(cls)).child(taskNum).set(reg);
+  if (!ww1Registrations[clsToKey(cls)]) ww1Registrations[clsToKey(cls)] = {};
+  ww1Registrations[clsToKey(cls)][String(taskNum)] = reg;
+  msgEl.textContent = '✅ הקבוצה נוצרה!';
+  msgEl.style.color = '#059669';
+  renderCards();
+  updateWw1Stats();
+  ww1Toast('✓ קבוצה נוצרה בהצלחה', 'ok');
+  setTimeout(function() {
+    buildTeacherContent();
+    var firstTab = document.querySelector('.t-panel-tab');
+    if (firstTab) switchTPanel(firstTab, 'tp-regs');
+  }, 1500);
 }
 
 </script>
