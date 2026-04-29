@@ -1397,6 +1397,10 @@ function startWw1Listener() {
     } else {
       setTimeout(renderCards, 100);
     }
+    // Refresh groups panel if open
+    if (document.getElementById('ww1-panel-groups')?.classList.contains('active')) {
+      renderGroups();
+    }
     // Refresh task cards if reg modal open
     if (document.getElementById('regOverlay').classList.contains('open') && regStep === 1) {
       buildTaskCards();
