@@ -2338,15 +2338,17 @@ function renderEditMembersList(reg) {
 }
 
 async function removeMemberFromGroup(idx) {
-  const reg = (ww1Registrations[clsToKey(editCls)] || ww1Registrations[editCls] || {})[editTn];
+  const clsKey = clsToKey(editCls);
+  const clsRegs = ww1Registrations[clsKey] || ww1Registrations[editCls] || {};
+  const reg = clsRegs[editTn] || clsRegs[String(editTn)];
   if (!reg) return;
   const newMembers = [...(reg.members || [])];
   newMembers.splice(idx, 1);
-  await ww1db.ref('ww1_registrations').child(clsToKey(editCls)).child(editTn).child('members').set(newMembers);
-  // Update local cache
-  if (ww1Registrations[clsToKey(editCls)] && ww1Registrations[clsToKey(editCls)][editTn]) {
-    ww1Registrations[clsToKey(editCls)][editTn].members = newMembers;
-  }
+  await ww1db.ref('ww1_registrations').child(clsKey).child(String(editTn)).child('members').set(newMembers);
+  // Update local cache - ensure structure exists
+  if (!ww1Registrations[clsKey]) ww1Registrations[clsKey] = {};
+  if (!ww1Registrations[clsKey][String(editTn)]) ww1Registrations[clsKey][String(editTn)] = {...reg};
+  ww1Registrations[clsKey][String(editTn)].members = newMembers;
   const updatedReg = {...reg, members: newMembers};
   renderEditMembersList(updatedReg);
   buildTeacherContent();
@@ -2367,11 +2369,12 @@ async function addMemberToGroup() {
   if (members.some(m => m.id === id)) return ww1Toast('תלמיד כבר בקבוצה', 'err');
   
   members.push({id, name});
-  await ww1db.ref('ww1_registrations').child(clsToKey(editCls)).child(editTn).child('members').set(members);
+  const _ck = clsToKey(editCls);
+  await ww1db.ref('ww1_registrations').child(_ck).child(String(editTn)).child('members').set(members);
   // Update local cache
-  if (ww1Registrations[clsToKey(editCls)] && ww1Registrations[clsToKey(editCls)][editTn]) {
-    ww1Registrations[clsToKey(editCls)][editTn].members = members;
-  }
+  if (!ww1Registrations[_ck]) ww1Registrations[_ck] = {};
+  if (!ww1Registrations[_ck][String(editTn)]) ww1Registrations[_ck][String(editTn)] = {};
+  ww1Registrations[_ck][String(editTn)].members = members;
   const updatedReg = {...reg, members};
   renderEditMembersList(updatedReg);
   buildTeacherContent();
