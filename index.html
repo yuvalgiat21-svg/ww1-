@@ -1715,7 +1715,7 @@ function switchTPanel(btn, id) {
 // STUDENTS is normally const - we shadow it with a mutable version
 let _studentsOverride = null; // { classKey: [{name,id}] } – stored in Firebase
 
-async async function loadStudentOverrides() {
+aasync function loadStudentOverrides() {
   const snap = await ww1db.ref('ww1_students').get();
   if (snap.exists()) _studentsOverride = snap.val();
 }
