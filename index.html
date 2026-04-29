@@ -1715,20 +1715,24 @@ function switchTPanel(btn, id) {
 // STUDENTS is normally const - we shadow it with a mutable version
 let _studentsOverride = null; // { classKey: [{name,id}] } – stored in Firebase
 
-async function loadStudentOverrides() {
+async async function loadStudentOverrides() {
   const snap = await ww1db.ref('ww1_students').get();
   if (snap.exists()) _studentsOverride = snap.val();
 }
 
 function getStudentsForClass(cls) {
-  if (_studentsOverride && _studentsOverride[cls]) return _studentsOverride[cls];
+  if (_studentsOverride) {
+    if (_studentsOverride[clsToKey(cls)]) return _studentsOverride[clsToKey(cls)];
+    if (_studentsOverride[cls]) return _studentsOverride[cls];
+  }
   return STUDENTS[cls] || [];
 }
 
 async function saveStudentsForClass(cls, list) {
   _studentsOverride = _studentsOverride || {};
   _studentsOverride[cls] = list;
-  await ww1db.ref(`ww1_students/${cls}`).set(list);
+  _studentsOverride[clsToKey(cls)] = list;
+  await ww1db.ref('ww1_students').child(clsToKey(cls)).set(list);
   // Refresh student list in reg modal if open and same class
   if (regClass === cls) filterStudentRows();
 }
