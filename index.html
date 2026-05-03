@@ -909,13 +909,12 @@ function renderCards(q='') {
 
   grid.querySelectorAll('.ww1-card').forEach(card => {
     card.addEventListener('click', () => {
-      if (card.classList.contains('taken')) return;
       if (card.classList.contains('ww1-card-custom')) {
-        openCustomStudentModal();
+        if (!card.classList.contains('taken')) openCustomStudentModal();
         return;
       }
       const n = parseInt(card.dataset.n);
-      openTaskDetail(n);
+      openTaskDetail(n); // Always allow viewing, even if taken
     });
   });
   updateWw1Stats();
