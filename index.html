@@ -693,6 +693,27 @@ a{color:inherit;text-decoration:none}
 
 .ww1-groups-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:12px; }
 
+
+/* ══ DOCX PREVIEW MODAL ══ */
+.prev-doc { font-family: 'Heebo', Arial, sans-serif; direction: rtl; color: #1a1a2e; max-width: 700px; margin: 0 auto; }
+.prev-header { text-align: center; padding: 1.5rem 0 1rem; border-bottom: 2px solid #1F4E79; margin-bottom: 1.5rem; }
+.prev-task-title { font-size: 22px; font-weight: 800; color: #1F4E79; margin-bottom: 4px; }
+.prev-task-sub { font-size: 14px; color: #666; font-style: italic; margin-bottom: 4px; }
+.prev-task-meta { font-size: 12px; color: #999; }
+.prev-section { margin-bottom: 1.5rem; }
+.prev-section-title { font-size: 15px; font-weight: 700; color: #1F4E79; border-bottom: 1px solid #C5DAEA; padding-bottom: 5px; margin-bottom: 10px; }
+.prev-field { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.prev-label { font-size: 13px; font-weight: 700; white-space: nowrap; }
+.prev-line { flex: 1; border-bottom: 1px solid #999; min-height: 20px; min-width: 100px; margin: 4px 0; }
+.prev-task { display: flex; gap: 12px; margin-bottom: 1rem; padding: 12px; background: #F7FAFD; border-radius: 8px; border: 1px solid #EEF2F8; }
+.prev-task-num { width: 28px; height: 28px; border-radius: 50%; background: #1F4E79; color: #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.prev-task-q { font-size: 13.5px; font-weight: 700; margin-bottom: 5px; }
+.prev-task-d { font-size: 12.5px; color: #555; line-height: 1.6; margin-bottom: 6px; }
+.prev-challenge { font-size: 12px; color: #7A4F00; background: #FFF8EC; border-right: 3px solid #F0A500; padding: 6px 10px; border-radius: 0 6px 6px 0; margin-bottom: 8px; }
+.prev-answer-lines { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.prev-cq { font-size: 14px; font-weight: 700; color: #1F4E79; margin-bottom: 6px; }
+.prev-source { font-size: 12.5px; color: #444; padding: 4px 0; border-bottom: 1px solid #EEF2F8; }
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -1041,6 +1062,10 @@ function openTaskDetail(n) {
         <div style="font-size:13px;color:rgba(255,255,255,.75);font-style:italic">${a.sub}</div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+        <button onclick="previewTaskDocx(${a.n})"
+          style="padding:7px 14px;background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;white-space:nowrap">
+          👁 תצוגה מקדימה
+        </button>
         <button onclick="downloadTaskDocx(${a.n})"
           style="padding:7px 14px;background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;white-space:nowrap">
           ⬇ הורד Word
@@ -2548,6 +2573,93 @@ async function doTeacherCreateGroup() {
   }, 1500);
 }
 
+
+// ── WORD PREVIEW MODAL ────────────────────────────────────────────────────────
+function previewTaskDocx(taskNum) {
+  const a = A.find(x => x.n === taskNum);
+  if (!a) return;
+
+  const modal = document.getElementById('docxPreviewModal');
+  const body = document.getElementById('docxPreviewBody');
+  const title = document.getElementById('docxPreviewTitle');
+
+  title.textContent = a.e + ' ' + a.t + ' — תצוגה מקדימה';
+
+  // Build HTML preview of the Word document
+  const introHtml = a.intro.map(p => `<p>${p}</p>`).join('');
+  const tasksHtml = a.tasks.map((t, i) => `
+    <div class="prev-task">
+      <div class="prev-task-num">${i+1}</div>
+      <div>
+        <div class="prev-task-q">${t.q}</div>
+        <div class="prev-task-d">${t.d}</div>
+        ${t.ch ? `<div class="prev-challenge">💡 אתגר חשיבה: ${t.ch}</div>` : ''}
+        <div class="prev-answer-lines">
+          <div class="prev-line"></div>
+          <div class="prev-line"></div>
+          <div class="prev-line"></div>
+        </div>
+      </div>
+    </div>`).join('');
+
+  const sourcesHtml = a.sources.map(s => `<div class="prev-source">• ${s}</div>`).join('');
+
+  body.innerHTML = `
+    <div class="prev-doc">
+      <!-- Header -->
+      <div class="prev-header">
+        <div class="prev-task-title">${a.e} ${a.t}</div>
+        <div class="prev-task-sub">${a.sub}</div>
+        <div class="prev-task-meta">מטלת חקר ${a.n} מתוך 23 · מלחמת העולם הראשונה (1914–1918)</div>
+      </div>
+
+      <!-- Registration -->
+      <div class="prev-section">
+        <div class="prev-section-title">פרטי הגשה</div>
+        <div class="prev-field"><span class="prev-label">כיתה:</span><div class="prev-line"></div></div>
+        <div class="prev-field"><span class="prev-label">חברי הקבוצה:</span><div class="prev-line"></div></div>
+        <div class="prev-field"><span class="prev-label">תאריך הגשה:</span><span style="color:#555">עד 25.5.2026</span></div>
+      </div>
+
+      <!-- Intro -->
+      <div class="prev-section">
+        <div class="prev-section-title">מבוא ורציונל פדגוגי</div>
+        ${introHtml}
+      </div>
+
+      <!-- Tasks -->
+      <div class="prev-section">
+        <div class="prev-section-title">משימות החקר והניתוח</div>
+        ${tasksHtml}
+      </div>
+
+      <!-- Critical Question -->
+      <div class="prev-section">
+        <div class="prev-section-title">שאלת העמדה הביקורתית</div>
+        <div class="prev-cq">${a.cq}</div>
+        <p style="font-size:13px;color:#555;margin:.5rem 0">${a.cd}</p>
+        ${a.creqs.map(r => `<div class="prev-source">• ${r}</div>`).join('')}
+        <div class="prev-answer-lines" style="margin-top:1rem">
+          <div class="prev-line"></div><div class="prev-line"></div>
+          <div class="prev-line"></div><div class="prev-line"></div>
+        </div>
+      </div>
+
+      <!-- Sources -->
+      <div class="prev-section">
+        <div class="prev-section-title">מקורות מידע</div>
+        ${sourcesHtml}
+      </div>
+    </div>
+  `;
+
+  // Wire download button
+  document.getElementById('docxPreviewDownloadBtn').onclick = () => {
+    downloadTaskDocx(taskNum);
+  };
+  modal.classList.add('open');
+}
+
 </script>
 
 <!-- Custom Student Task Modal -->
@@ -2590,6 +2702,21 @@ async function doTeacherCreateGroup() {
       <button class="reg-modal-close" onclick="document.getElementById('editMembersModal').classList.remove('open')">✕</button>
     </div>
     <div class="reg-modal-body" id="editMembersList"></div>
+  </div>
+</div>
+
+
+<!-- Docx Preview Modal -->
+<div class="reg-overlay" id="docxPreviewModal" style="z-index:3000;align-items:flex-start;padding:2rem 1rem;overflow-y:auto" onclick="if(event.target===this)this.classList.remove('open')">
+  <div style="background:#fff;border-radius:16px;width:min(760px,96vw);margin:0 auto;overflow:hidden;box-shadow:0 12px 50px rgba(0,0,0,.25)">
+    <div style="background:linear-gradient(135deg,#1F4E79,#2E75B6);padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between">
+      <div id="docxPreviewTitle" style="font-size:15px;font-weight:700;color:#fff"></div>
+      <div style="display:flex;gap:8px">
+        <button id="docxPreviewDownloadBtn" style="padding:7px 14px;background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:8px;cursor:pointer;font-size:12px;font-weight:600">⬇ הורד Word</button>
+        <button onclick="document.getElementById('docxPreviewModal').classList.remove('open')" style="background:rgba(255,255,255,.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px">✕</button>
+      </div>
+    </div>
+    <div id="docxPreviewBody" style="padding:2rem;max-height:80vh;overflow-y:auto"></div>
   </div>
 </div>
 
